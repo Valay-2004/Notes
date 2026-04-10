@@ -1,0 +1,29 @@
+/* Base Variables are in style.css */
+
+/* Java Orange Theme (Default) */
+.theme-java {
+  --accent: #ff9f1c;
+  --accent-hover: #ffb74d;
+  --accent-muted: rgba(255, 159, 28, 0.1);
+  --glass-glow: rgba(255, 159, 28, 0.05);
+
+  /* Callouts */
+  --callout-info: #007396;
+  --callout-tip: #2e7d32;
+  --callout-warn: #e65100;
+  --callout-danger: #c62828;
+}
+
+/* Obsidian Purple Theme */
+.theme-obsidian {
+  --accent: #7f6df2;
+  --accent-hover: #9c8df6;
+  --accent-muted: rgba(127, 109, 242, 0.1);
+  --glass-glow: rgba(127, 109, 242, 0.05);
+
+  /* Callouts */
+  --callout-info: #007cc0;
+  --callout-tip: #2ea043;
+  --callout-warn: #d29922;
+  --callout-danger: #f85149;
+}
