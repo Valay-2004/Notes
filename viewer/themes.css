@@ -1,29 +1,147 @@
-/* Base Variables are in style.css */
+/* ===== THEME DEFINITIONS ===== */
 
 /* Java Orange Theme (Default) */
 .theme-java {
   --accent: #ff9f1c;
   --accent-hover: #ffb74d;
-  --accent-muted: rgba(255, 159, 28, 0.1);
-  --glass-glow: rgba(255, 159, 28, 0.05);
+  --accent-muted: rgba(255, 159, 28, 0.08);
+  --glass-glow: rgba(255, 159, 28, 0.03);
+
+  --bg-deep: #0f172a;
+  --bg-secondary: #1e293b;
+  --glass-bg: rgba(15, 23, 42, 0.5);
+  --glass-border: rgba(255, 159, 28, 0.08);
+  --hover-bg: rgba(255, 159, 28, 0.08);
 
   /* Callouts */
-  --callout-info: #007396;
-  --callout-tip: #2e7d32;
-  --callout-warn: #e65100;
-  --callout-danger: #c62828;
+  --callout-info: #0284c7;
+  --callout-tip: #16a34a;
+  --callout-warn: #ea580c;
+  --callout-danger: #dc2626;
+  --callout-note: #7c3aed;
 }
 
 /* Obsidian Purple Theme */
 .theme-obsidian {
   --accent: #7f6df2;
   --accent-hover: #9c8df6;
-  --accent-muted: rgba(127, 109, 242, 0.1);
-  --glass-glow: rgba(127, 109, 242, 0.05);
+  --accent-muted: rgba(127, 109, 242, 0.08);
+  --glass-glow: rgba(127, 109, 242, 0.03);
+
+  --bg-deep: #0f0e1a;
+  --bg-secondary: #1a1927;
+  --glass-bg: rgba(15, 14, 26, 0.5);
+  --glass-border: rgba(127, 109, 242, 0.08);
+  --hover-bg: rgba(127, 109, 242, 0.08);
 
   /* Callouts */
-  --callout-info: #007cc0;
-  --callout-tip: #2ea043;
-  --callout-warn: #d29922;
-  --callout-danger: #f85149;
+  --callout-info: #0ea5e9;
+  --callout-tip: #10b981;
+  --callout-warn: #d97706;
+  --callout-danger: #ef4444;
+  --callout-note: #8b5cf6;
+}
+
+/* Nord Theme */
+.theme-nord {
+  --accent: #88c0d0;
+  --accent-hover: #81c7d9;
+  --accent-muted: rgba(136, 192, 208, 0.08);
+  --glass-glow: rgba(136, 192, 208, 0.03);
+
+  --bg-deep: #2e3440;
+  --bg-secondary: #3b4252;
+  --glass-bg: rgba(46, 52, 64, 0.5);
+  --glass-border: rgba(136, 192, 208, 0.08);
+  --hover-bg: rgba(136, 192, 208, 0.08);
+
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --text-muted: #a3be8c;
+  --text-dim: #81a1c1;
+
+  /* Callouts */
+  --callout-info: #81a1c1;
+  --callout-tip: #a3be8c;
+  --callout-warn: #ebcb8b;
+  --callout-danger: #bf616a;
+  --callout-note: #b48ead;
+}
+
+/* Dracula Theme */
+.theme-dracula {
+  --accent: #bd93f9;
+  --accent-hover: #caa9fa;
+  --accent-muted: rgba(189, 147, 249, 0.08);
+  --glass-glow: rgba(189, 147, 249, 0.03);
+
+  --bg-deep: #282a36;
+  --bg-secondary: #44475a;
+  --glass-bg: rgba(40, 42, 54, 0.5);
+  --glass-border: rgba(189, 147, 249, 0.08);
+  --hover-bg: rgba(189, 147, 249, 0.08);
+
+  --text-primary: #f8f8f2;
+  --text-secondary: #e5e5e5;
+  --text-muted: #bd93f9;
+  --text-dim: #6272a4;
+
+  /* Callouts */
+  --callout-info: #8be9fd;
+  --callout-tip: #50fa7b;
+  --callout-warn: #f1fa8c;
+  --callout-danger: #ff5555;
+  --callout-note: #bd93f9;
+}
+
+/* Gruvbox Theme */
+.theme-gruvbox {
+  --accent: #fabd2f;
+  --accent-hover: #fbce7f;
+  --accent-muted: rgba(250, 189, 47, 0.08);
+  --glass-glow: rgba(250, 189, 47, 0.03);
+
+  --bg-deep: #282828;
+  --bg-secondary: #3c3836;
+  --glass-bg: rgba(40, 40, 40, 0.5);
+  --glass-border: rgba(250, 189, 47, 0.08);
+  --hover-bg: rgba(250, 189, 47, 0.08);
+
+  --text-primary: #ebdbb2;
+  --text-secondary: #d5c4a1;
+  --text-muted: #b8956a;
+  --text-dim: #928374;
+
+  /* Callouts */
+  --callout-info: #83a598;
+  --callout-tip: #b8bb26;
+  --callout-warn: #fe8019;
+  --callout-danger: #fb4934;
+  --callout-note: #d3869b;
+}
+
+/* Solarized Dark Theme */
+.theme-solarized {
+  --accent: #268bd2;
+  --accent-hover: #4db4e8;
+  --accent-muted: rgba(38, 139, 210, 0.08);
+  --glass-glow: rgba(38, 139, 210, 0.03);
+
+  --bg-deep: #002b36;
+  --bg-secondary: #073642;
+  --glass-bg: rgba(0, 43, 54, 0.5);
+  --glass-border: rgba(38, 139, 210, 0.08);
+  --hover-bg: rgba(38, 139, 210, 0.08);
+
+  --text-primary: #93a1a1;
+  --text-secondary: #839496;
+  --text-muted: #657b83;
+  --text-dim: #586e75;
+
+  /* Callouts */
+  --callout-info: #268bd2;
+  --callout-tip: #859900;
+  --callout-warn: #b58900;
+  --callout-danger: #dc322f;
+  --callout-note: #6c71c4;
 }
