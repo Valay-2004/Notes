@@ -3,6 +3,7 @@ const state = {
     manifest: [],
     currentPath: null,
     theme: 'theme-java',
+    themes: ['theme-java', 'theme-obsidian', 'theme-nord', 'theme-dracula', 'theme-gruvbox', 'theme-solarized'],
     sidebarOpen: window.innerWidth > 1024
 };
 
@@ -48,7 +49,23 @@ marked.setOptions({
     gfm: true,
     breaks: true,
     mangle: false,
-    headerIds: false
+    headerIds: false,
+    sanitize: false
+});
+
+// Custom link renderer to support Mermaid/SVG
+marked.use({
+    renderer: {
+        ...marked.defaults.renderer,
+        link(token) {
+            const href = token.href;
+            const text = this.parser.parseInline(token.tokens);
+            return `<a href="${href}">${text}</a>`;
+        },
+        html(token) {
+            return token.text; // Allow HTML pass-through for SVG
+        }
+    }
 });
 
 // Initialize
@@ -229,19 +246,29 @@ function setupEventListeners() {
 
     el.themeBtn.onclick = () => {
         const body = document.body;
-        if (state.theme === 'theme-java') {
-            body.classList.replace('theme-java', 'theme-obsidian');
-            state.theme = 'theme-obsidian';
-        } else {
-            body.classList.replace('theme-obsidian', 'theme-java');
-            state.theme = 'theme-java';
-        }
+        const currentIndex = state.themes.indexOf(state.theme);
+        const nextIndex = (currentIndex + 1) % state.themes.length;
+        const nextTheme = state.themes[nextIndex];
+        
+        body.classList.remove(state.theme);
+        body.classList.add(nextTheme);
+        state.theme = nextTheme;
+        
+        localStorage.setItem('notes-theme', nextTheme);
     };
 
     el.toggleSidebar.onclick = () => {
         state.sidebarOpen = !state.sidebarOpen;
         el.sidebar.classList.toggle('open', state.sidebarOpen);
     };
+
+    // Restore theme from localStorage
+    const savedTheme = localStorage.getItem('notes-theme');
+    if (savedTheme && state.themes.includes(savedTheme)) {
+        document.body.classList.remove(state.theme);
+        document.body.classList.add(savedTheme);
+        state.theme = savedTheme;
+    }
 }
 
 init();
