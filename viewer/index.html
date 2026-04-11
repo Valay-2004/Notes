@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notes • VALAY</title>
+    <title>VALAY • Notes Vault</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
     <!-- CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-one-dark.min.css" rel="stylesheet" />
@@ -22,56 +25,63 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="themes.css" />
 </head>
+
 <body class="theme-java">
     <div class="app">
         <!-- Sidebar -->
         <aside class="sidebar glass" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                   <i data-lucide="blocks"></i>
-                   <span>VALAY NOTES</span>
+                    <i data-lucide="book-open-2"></i>
+                    <span>NOTES VAULT</span>
                 </div>
                 <div class="search-container">
                     <i data-lucide="search"></i>
-                    <input type="text" id="search" placeholder="Quick Search..." autocomplete="off" />
+                    <input type="text" id="search" placeholder="Search notes..." autocomplete="off" />
                 </div>
             </div>
             <nav id="sidebar-nav" class="sidebar-nav"></nav>
             <div class="sidebar-footer">
-                <button id="theme-toggle-btn" class="glass-btn">
+                <button id="theme-toggle-btn" class="glass-btn" title="Toggle theme">
                     <i data-lucide="palette"></i>
-                    <span>Toggle Theme</span>
+                    <span>Theme</span>
                 </button>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="header glass sticky-header">
-                <button id="toggle-sidebar" class="btn-icon"><i data-lucide="menu"></i></button>
+            <header class="header glass">
+                <button id="toggle-sidebar" class="btn-icon" title="Toggle sidebar">
+                    <i data-lucide="menu"></i>
+                </button>
                 <div class="breadcrumb" id="breadcrumb">Vault / Home</div>
                 <div class="header-actions">
-                    <button id="copy-note" class="btn-icon"><i data-lucide="link-2"></i></button>
-                    <button id="print-note" class="btn-icon"><i data-lucide="printer"></i></button>
+                    <button id="copy-note" class="btn-icon" title="Copy link to note">
+                        <i data-lucide="link-2"></i>
+                    </button>
+                    <button id="print-note" class="btn-icon" title="Print note">
+                        <i data-lucide="printer"></i>
+                    </button>
                 </div>
             </header>
 
             <div class="content-wrapper">
                 <article class="prose-container">
-                    <h1 id="note-title" class="main-title">Welcome to NoteSphere</h1>
+                    <h1 id="note-title" class="main-title">Welcome to Notes Vault</h1>
                     <div id="note-content" class="markdown-body">
                         <div class="loading-state">
                             <i data-lucide="loader-2" class="spin"></i>
-                            <span>Loading index...</span>
+                            <span>Loading vault...</span>
                         </div>
                     </div>
                 </article>
-                
+
                 <aside id="toc-container" class="toc-sidebar">
-                    <div class="toc glass sticky-toc">
+                    <div class="toc glass">
                         <div class="toc-header">
                             <i data-lucide="list"></i>
-                            <span>ON THIS PAGE</span>
+                            <span>Contents</span>
                         </div>
                         <div id="toc" class="toc-content"></div>
                     </div>
@@ -82,4 +92,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
