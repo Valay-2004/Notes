@@ -1,11 +1,6 @@
-/**
- * VALAY Notes Vault - Consolidated Application
- * All modules combined into a single file for simplified loading
- */
-
 // ============================================================================
 // THEME MANAGEMENT (theme.js)
-// =======================const response = await fetch(`${encodedPath}`);=====================================================
+// ============================================================================
 
 const THEMES = [
   "theme-white",
@@ -63,31 +58,59 @@ class MarkdownParser {
     });
 
     const renderer = {
-      blockquote: (quote) => {
-        const calloutMatch = quote.match(/^\s*\[!(\w+)\]\s*(.*?)$/m);
+      blockquote: (token) => {
+        const text = typeof token === "string" ? token : token.text || "";
+        const calloutMatch = text.match(/^\s*\[!(\w+)\]\s*(.*?)$/m);
 
         if (calloutMatch) {
           const type = calloutMatch[1].toLowerCase();
           const titleText =
             calloutMatch[2] || type.charAt(0).toUpperCase() + type.slice(1);
-          const content = quote.replace(/^\s*\[!\w+\]\s*.*?\n?/, "");
+          const rawContent = text.replace(/^\s*\[!\w+\]\s*.*?\n?/, "");
 
-          return `<div class="callout callout-${type}">
-            <div class="callout-icon">📌</div>
+          const calloutIcons = {
+            note: "info",
+            abstract: "book",
+            info: "info",
+            tip: "flame",
+            success: "check-circle",
+            question: "help-circle",
+            warning: "alert-triangle",
+            failure: "x-circle",
+            danger: "zap",
+            bug: "bug",
+            example: "list",
+            quote: "quote",
+          };
+
+          const iconName = calloutIcons[type] || "info";
+
+          return `<div class="callout" data-type="${type}">
+            <div class="callout-title">
+              <i data-lucide="${iconName}"></i>
+              <span>${titleText}</span>
+            </div>
             <div class="callout-content">
-              <div class="callout-title">${titleText}</div>
-              <div class="callout-body">${content}</div>
+              ${marked.parse(rawContent)}
             </div>
           </div>`;
         }
 
-        return `<blockquote>${quote}</blockquote>`;
+        const content = typeof token === "string" ? token : token.text;
+        return `<blockquote>${content}</blockquote>`;
       },
 
-      code: (code, language) => {
-        const lang = language || "text";
-        const highlighted = this.highlightCode(code, lang);
-        return `<pre><code class="language-${lang}">${highlighted}</code></pre>`;
+      code: (tokenOrCode, language) => {
+        const isToken = typeof tokenOrCode === "object";
+        const code = isToken ? tokenOrCode.text : tokenOrCode;
+        const lang = (isToken ? tokenOrCode.lang : language) || "text";
+
+        try {
+          const highlighted = this.highlightCode(code, lang);
+          return `<pre class="language-${lang}"><code class="language-${lang}">${highlighted}</code></pre>`;
+        } catch (e) {
+          return `<pre class="language-${lang}"><code class="language-${lang}">${code}</code></pre>`;
+        }
       },
 
       image: (token) => {
@@ -99,15 +122,22 @@ class MarkdownParser {
   }
 
   highlightCode(code, language) {
+    if (!language) return code;
     try {
-      if (Prism.languages[language]) {
-        return Prism.highlight(code, Prism.languages[language], language);
+      const prismLang = Prism.languages[language] || Prism.languages.javascript;
+      if (prismLang) {
+        return Prism.highlight(code, prismLang, language);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Prism highlighting failed:", e);
+    }
     return code;
   }
 
   preprocess(markdown) {
+    // Strip YAML frontmatter
+    markdown = markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, "");
+
     markdown = markdown.replace(
       /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
       (match, path, alias) => {
@@ -159,9 +189,9 @@ const markdownParser = new MarkdownParser();
 // ============================================================================
 
 const DOM = {
-  container: document.querySelector(".app-container"),
+  container: document.querySelector(".app"),
   sidebar: document.getElementById("sidebar"),
-  main: document.querySelector(".main"),
+  main: document.querySelector(".main-content"),
   header: document.querySelector(".header"),
   noteContent: document.getElementById("note-content"),
   noteTitle: document.getElementById("note-title"),
@@ -270,6 +300,14 @@ function toggleTOC() {
   if (!state.isMobile) return;
   state.tocOpen = !state.tocOpen;
   DOM.tocSidebar.classList.toggle("open", state.tocOpen);
+}
+
+function toggleSidebar() {
+  if (state.isMobile) {
+    DOM.sidebar.classList.toggle("active");
+  } else {
+    DOM.container.classList.toggle("collapsed");
+  }
 }
 
 function closeSidebars() {
@@ -907,16 +945,27 @@ async function loadNote(path) {
     showWelcome();
     return;
   }
-
   try {
     ui.showLoading();
 
+    console.log(`Loading note from path: "${path}"`);
+
+    // Ensure path is correctly encoded for fetch while preserving "/"
     const encodedPath = path
       .split("/")
-      .map((p) => encodeURIComponent(p))
+      .map((part) => encodeURIComponent(part))
       .join("/");
-    const response = await fetch(`${encodedPath}`);
-    if (!response.ok) throw new Error(`Failed to load ${path}`);
+
+    const fetchUrl = `./${encodedPath}`;
+    console.log(`Fetching URL: "${fetchUrl}"`);
+
+    const response = await fetch(fetchUrl);
+    if (!response.ok) {
+      console.error(
+        `Fetch failed with status: ${response.status} ${response.statusText}`,
+      );
+      throw new Error(`Failed to load ${path}`);
+    }
 
     const markdown = await response.text();
 
@@ -959,7 +1008,7 @@ async function loadNote(path) {
 }
 
 function showWelcome() {
-  DOM.noteTitle.textContent = "Welcome to VAULT";
+  DOM.noteTitle.textContent = "Welcome to My Notes";
   DOM.noteBody.innerHTML = `
     <div style="padding: 40px; text-align: center; color: var(--text-muted);">
       <p style="font-size: 18px; margin-bottom: 12px;">📃 Select a note to begin</p>
