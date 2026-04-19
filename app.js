@@ -114,7 +114,42 @@ class MarkdownParser {
       },
 
       image: (token) => {
-        return `<img src="${token.href}" alt="${token.text}" title="${token.title || ""}" />`;
+        let src = token.href;
+
+        // Handle Obsidian image embeds converted to note:// by preprocess
+        if (src.startsWith("note://")) {
+          src = src.substring(7); // Remove "note://"
+        }
+
+        if (
+          !src.startsWith("http") &&
+          !src.startsWith("https") &&
+          !src.startsWith("/") &&
+          !src.startsWith("data:")
+        ) {
+          // Resolve relative to current note path
+          if (state.currentNote?.path) {
+            const dir = state.currentNote.path.substring(
+              0,
+              state.currentNote.path.lastIndexOf("/") + 1,
+            );
+            src = dir + src;
+          }
+
+          // Encode the path to handle spaces and special characters appropriately
+          src = src
+            .split("/")
+            .map((part) => encodeURIComponent(part))
+            .join("/");
+
+          // Make the resolved path relative to the app base exactly like fetchUrl does
+          const baseUrl = window.location.pathname.substring(
+            0,
+            window.location.pathname.lastIndexOf("/") + 1,
+          );
+          src = baseUrl + src;
+        }
+        return `<img src="${src}" alt="${token.text}" title="${token.title || ""}" />`;
       },
     };
 
@@ -475,13 +510,14 @@ class SidebarManager {
     if (this.expandedFolders.has(path)) {
       this.expandedFolders.delete(path);
       childList.style.display = "none";
-      linkElement.querySelector("i").setAttribute("data-lucide", "folder");
+      const icon = linkElement.querySelector("i, svg");
+      if (icon) icon.setAttribute("data-lucide", "folder");
     } else {
       this.expandedFolders.add(path);
       childList.style.display = "block";
-      linkElement.querySelector("i").setAttribute("data-lucide", "folder-open");
+      const icon = linkElement.querySelector("i, svg");
+      if (icon) icon.setAttribute("data-lucide", "folder-open");
     }
-
     ui.createIcons();
   }
 
@@ -956,7 +992,14 @@ async function loadNote(path) {
       .map((part) => encodeURIComponent(part))
       .join("/");
 
-    const fetchUrl = `./${encodedPath}`;
+    // Build robust absolute URL relative to the app base
+    const baseUrl =
+      window.location.origin +
+      window.location.pathname.substring(
+        0,
+        window.location.pathname.lastIndexOf("/") + 1,
+      );
+    const fetchUrl = `${baseUrl}${encodedPath}`;
     console.log(`Fetching URL: "${fetchUrl}"`);
 
     const response = await fetch(fetchUrl);
