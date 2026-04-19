@@ -1,4 +1,136 @@
 <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALAY • Notes Vault</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-one-dark.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="theme-white">
+    <!-- Desktop & Mobile Container -->
+    <div class="app-container">
+        <!-- Left Sidebar: File Tree -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="vault-logo">
+                    <i data-lucide="book-open"></i>
+                    <span>VAULT</span>
+                </div>
+            </div>
+
+            <div class="sidebar-search">
+                <i data-lucide="search"></i>
+                <input type="text" id="sidebar-search" placeholder="Search notes..." autocomplete="off">
+            </div>
+
+            <nav class="sidebar-nav" id="sidebar-nav"></nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-theme" id="btn-theme" title="Toggle theme">
+                    <i data-lucide="palette"></i>
+                    <span>Theme</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Center: Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <button class="btn-sidebar-toggle" id="btn-sidebar-toggle" title="Toggle sidebar">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="breadcrumb" id="breadcrumb"></div>
+                <div class="header-actions">
+                    <button class="btn-icon" id="btn-copy-link" title="Copy link to note">
+                        <i data-lucide="link-2"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Note Content -->
+            <div class="content-area">
+                <article class="note-content" id="note-content">
+                    <h1 class="note-title" id="note-title"></h1>
+                    <div class="note-body" id="note-body">
+                        <div class="loading-state">
+                            <i data-lucide="loader-2" class="spinner"></i>
+                            <p>Loading vault...</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Right Sidebar: Table of Contents -->
+                <aside class="toc-sidebar" id="toc-sidebar">
+                    <div class="toc-header">
+                        <i data-lucide="list"></i>
+                        <span>Contents</span>
+                    </div>
+                    <nav class="toc-nav" id="toc-nav"></nav>
+                </aside>
+            </div>
+
+            <!-- Mobile Bottom Navigation -->
+            <nav class="mobile-nav" id="mobile-nav">
+                <button class="btn-prev" id="btn-prev" title="Previous note">
+                    <i data-lucide="chevron-left"></i>
+                    <span>Previous</span>
+                </button>
+                <button class="btn-vault" id="btn-vault" title="Open vault">
+                    <i data-lucide="folder-open"></i>
+                </button>
+                <button class="btn-next" id="btn-next" title="Next note">
+                    <span>Next</span>
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </nav>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal Overlay (for images, etc.) -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <!-- Scripts (in order) -->
+    <script src="theme.js"></script>
+    <script src="parser.js"></script>
+    <script src="ui.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="toc.js"></script>
+    <script src="ui-effects.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
