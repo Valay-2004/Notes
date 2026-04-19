@@ -1,7 +1,12 @@
 # Notes are Here
 
 > Better to read these notes on obsidian (Since I created on it and it looks good there)
+
 > In future I'll be adding static pages for my notes to render the same as obsidian :J
+
+> [!NOTE]
+> You can now view these notes on your browser as well :)
+> Check it here → [Notes](https://valay-2004.github.io/Notes/)
 
 <!-- # VAULT - Notes Viewer
 
