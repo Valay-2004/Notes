@@ -1,58 +1,106 @@
-const fs = require('fs');
-const path = require('path');
+#!/usr/bin/env node
 
-const ROOT_DIR = path.join(__dirname, '..');
-const OUTPUT_FILE = path.join(__dirname, '../viewer/notes-manifest.json');
+const fs = require("fs");
+const path = require("path");
 
-// Folders to exclude from crawl
-const EXCLUDE = ['.git', 'viewer', 'scripts', '.obsidian'];
+const ROOT_DIR = path.join(__dirname, "..");
+const OUTPUT_FILE = path.join(__dirname, "../viewer/notes-manifest.json");
 
-function getTitle(filePath) {
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        const match = content.match(/^#\s+(.+)$/m);
-        if (match) return match[1].trim();
-    } catch (e) {}
-    return path.basename(filePath, '.md');
+// Folders/files to exclude from crawl
+const EXCLUDE = [
+  ".git",
+  "viewer",
+  "scripts",
+  ".obsidian",
+  "viewer-old-backup",
+  "node_modules",
+];
+const SKIP_FILES = [
+  "Implementation Plan.md",
+  "README.md",
+  "Diff.md",
+  "VIEWER_IMPROVEMENTS.md",
+];
+
+function extractTitle(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, "utf8");
+    const match = content.match(/^#\s+(.+?)$/m);
+    if (match) return match[1].trim();
+  } catch (e) {
+    // Ignore read errors
+  }
+  return path.basename(filePath, ".md");
 }
 
-function crawl(dir, relativePath = '') {
-    const items = [];
+function sortItems(items) {
+  return items.sort((a, b) => {
+    // Folders first, then files, both alphabetically
+    if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function crawlDirectory(dir, relativePath = "") {
+  const items = [];
+
+  try {
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
-        if (EXCLUDE.includes(file)) continue;
-        
-        const fullPath = path.join(dir, file);
-        const relPath = path.join(relativePath, file);
-        const stats = fs.statSync(fullPath);
+      // Skip excluded items
+      if (EXCLUDE.includes(file)) continue;
 
-        if (stats.isDirectory()) {
-            const children = crawl(fullPath, relPath);
-            if (children.length > 0) {
-                items.push({
-                    type: 'folder',
-                    name: file,
-                    path: relPath.replace(/\\/g, '/'),
-                    children: children.sort((a, b) => a.name.localeCompare(b.name))
-                });
-            }
-        } else if (file.endsWith('.md') && file !== 'Implementation Plan.md' && file !== 'README.md' && file !== 'Diff.md') {
-            items.push({
-                type: 'file',
-                name: file,
-                title: getTitle(fullPath),
-                path: relPath.replace(/\\/g, '/')
-            });
+      const fullPath = path.join(dir, file);
+      const relPath = path.join(relativePath, file);
+      const stats = fs.statSync(fullPath);
+
+      if (stats.isDirectory()) {
+        // Recursively crawl subdirectories
+        const children = crawlDirectory(fullPath, relPath);
+        if (children.length > 0) {
+          items.push({
+            type: "folder",
+            name: file,
+            path: relPath.replace(/\\/g, "/"),
+            children: children,
+          });
         }
+      } else if (file.endsWith(".md") && !SKIP_FILES.includes(file)) {
+        // Add markdown files
+        items.push({
+          type: "file",
+          name: file,
+          title: extractTitle(fullPath),
+          path: relPath.replace(/\\/g, "/"),
+        });
+      }
     }
-    return items.sort((a, b) => {
-        // Folders first, then files
-        if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
-        return a.name.localeCompare(b.name);
-    });
+  } catch (err) {
+    console.error(`Error reading directory ${dir}:`, err.message);
+  }
+
+  return sortItems(items);
 }
 
-const manifest = crawl(ROOT_DIR);
-fs.writeFileSync(OUTPUT_FILE, JSON.stringify(manifest, null, 2));
-console.log('Global manifest generated at:', OUTPUT_FILE);
+// Generate and write manifest
+try {
+  const manifest = crawlDirectory(ROOT_DIR);
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(manifest, null, 2));
+  console.log(`✓ Manifest generated successfully at: ${OUTPUT_FILE}`);
+  console.log(`  Total items indexed: ${getItemCount(manifest)}`);
+} catch (err) {
+  console.error("✗ Failed to generate manifest:", err.message);
+  process.exit(1);
+}
+
+function getItemCount(items) {
+  let count = 0;
+  items.forEach((item) => {
+    if (item.type === "file") count++;
+    else if (item.type === "folder" && item.children) {
+      count += getItemCount(item.children);
+    }
+  });
+  return count;
+}
