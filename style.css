@@ -646,6 +646,30 @@ pre code {
   margin-bottom: 0;
 }
 
+@media (max-width: 768px) {
+  .callout {
+    margin: 1.2rem 0;
+    border-radius: 6px;
+  }
+
+  .callout-title {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    gap: 10px;
+  }
+
+  .callout-title i {
+    width: 16px;
+    height: 16px;
+  }
+
+  .callout-content {
+    padding: 12px;
+    font-size: 0.93rem;
+    line-height: 1.6;
+  }
+}
+
 .callout[data-type="tip"] {
   border-left-color: #10b981;
   background: rgba(16, 185, 129, 0.05);
@@ -922,6 +946,64 @@ pre code {
 
   .main-content {
     padding: 12px;
+    padding-bottom: 80px;
+    overflow-y: auto;
+  }
+
+  .prose-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .prose-container > * {
+    padding: 0 12px !important;
+  }
+
+  .prose-container h1 {
+    font-size: 1.6rem;
+    margin: 16px 0 12px 0;
+  }
+
+  .prose-container h2 {
+    font-size: 1.35rem;
+    margin: 14px 0 10px 0;
+  }
+
+  .prose-container h3 {
+    font-size: 1.15rem;
+    margin: 12px 0 8px 0;
+  }
+
+  .prose-container p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 10px 0;
+  }
+
+  .prose-container ul,
+  .prose-container ol {
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+
+  .prose-container li {
+    margin: 6px 0;
+    font-size: 0.95rem;
+  }
+
+  .prose-container pre {
+    margin: 12px 0;
+    overflow-x: auto;
+  }
+
+  .prose-container code {
+    font-size: 0.85rem;
+  }
+
+  .prose-container img {
+    max-width: 100%;
+    height: auto;
+    margin: 12px 0;
   }
 
   .content-wrapper {

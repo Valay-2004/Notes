@@ -66,7 +66,9 @@ class MarkdownParser {
           const type = calloutMatch[1].toLowerCase();
           const titleText =
             calloutMatch[2] || type.charAt(0).toUpperCase() + type.slice(1);
-          const rawContent = text.replace(/^\s*\[!\w+\]\s*.*?\n?/, "");
+          let rawContent = text.replace(/^\s*\[!\w+\]\s*.*?\n?/, "");
+          // Remove any leading heading from callout content to avoid duplication
+          rawContent = rawContent.replace(/^#+\s+.+?\n?/, "");
 
           const calloutIcons = {
             note: "info",
