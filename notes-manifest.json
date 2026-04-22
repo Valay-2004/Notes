@@ -83,6 +83,19 @@
             "path": "JAVA/03. Exception Handling/02. Exceptions in Java AIO.md"
           }
         ]
+      },
+      {
+        "type": "folder",
+        "name": "04. Pattern Printing in Java",
+        "path": "JAVA/02. OOPS",
+        "children": [
+          {
+            "type": "file",
+            "name": "Pattern Printing in Java.md",
+            "title": "Pattern Printing in Java",
+            "path": "JAVA/04. Pattern Printing in Java/Pattern Printing in Java.md"
+          }
+        ]
       }
     ]
   }
