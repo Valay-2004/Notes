@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT_DIR = path.join(__dirname, "..");
-const OUTPUT_FILE = path.join(__dirname, "../viewer/notes-manifest.json");
+const OUTPUT_FILE = path.join(__dirname, "../notes-manifest.json");
 
 // Folders/files to exclude from crawl
 const EXCLUDE = [
@@ -15,12 +15,7 @@ const EXCLUDE = [
   "viewer-old-backup",
   "node_modules",
 ];
-const SKIP_FILES = [
-  "Implementation Plan.md",
-  "README.md",
-  "Diff.md",
-  "VIEWER_IMPROVEMENTS.md",
-];
+const SKIP_FILES = ["README.md"];
 
 function extractTitle(filePath) {
   try {
