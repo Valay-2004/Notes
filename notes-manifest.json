@@ -87,13 +87,44 @@
       {
         "type": "folder",
         "name": "04. Pattern Printing in Java",
-        "path": "JAVA/02. OOPS",
+        "path": "JAVA/04. Pattern Printing in Java",
         "children": [
           {
             "type": "file",
             "name": "Pattern Printing in Java.md",
-            "title": "Pattern Printing in Java",
+            "title": "Pattern Printing in Java - Complete Notes",
             "path": "JAVA/04. Pattern Printing in Java/Pattern Printing in Java.md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "05. Collection Framework",
+        "path": "JAVA/05. Collection Framework",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Collection Framework.md",
+            "title": "01. Collection Framework",
+            "path": "JAVA/05. Collection Framework/01. Collection Framework.md"
+          },
+          {
+            "type": "file",
+            "name": "02. Implementation of Collections.md",
+            "title": "02. Implementation of Collections",
+            "path": "JAVA/05. Collection Framework/02. Implementation of Collections.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Comparable vs Comparator.md",
+            "title": "03. Comparable vs Comparator",
+            "path": "JAVA/05. Collection Framework/03. Comparable vs Comparator.md"
+          },
+          {
+            "type": "file",
+            "name": "04. Map Interface.md",
+            "title": "04. Map Interface",
+            "path": "JAVA/05. Collection Framework/04. Map Interface.md"
           }
         ]
       }
