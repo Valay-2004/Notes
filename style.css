@@ -142,16 +142,18 @@ body {
   background: var(--bg-card);
   border-right: 1px solid var(--border-color);
   z-index: 1000;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              border 0.3s ease;
   overflow: hidden;
   flex-shrink: 0;
 }
 
+/* Desktop: collapse the sidebar width to 0 */
 .app.collapsed .sidebar {
   width: 0;
   border-right: 0;
   opacity: 0;
-  transform: translateX(-20px);
   pointer-events: none;
 }
 
@@ -930,6 +932,11 @@ pre code {
     padding-top: 20px;
     margin-top: 12px;
   }
+
+  /* When app is collapsed on tablet (used from desktop toggle going to tablet), restore transform */
+  .app.collapsed .sidebar {
+    transform: translateX(-100%);
+  }
 }
 
 @media (max-width: 768px) {
@@ -938,69 +945,102 @@ pre code {
   }
 
   .sidebar {
-    width: 100%;
-    height: auto;
-    margin: 0;
+    width: 85vw;
+    max-width: 320px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
     border-radius: 0;
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .main-content {
-    padding: 12px;
+    padding: 8px 8px 0;
     padding-bottom: 80px;
     overflow-y: auto;
+    min-height: 100vh;
+  }
+
+  .header {
+    padding: 10px 14px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
   }
 
   .prose-container {
     max-width: 100% !important;
     padding: 0 !important;
+    border-radius: 14px;
   }
 
   .prose-container > * {
-    padding: 0 12px !important;
+    padding: 0 14px !important;
   }
 
-  .prose-container h1 {
-    font-size: 1.6rem;
-    margin: 16px 0 12px 0;
+  .markdown-body {
+    font-size: 0.96rem;
+    line-height: 1.72;
   }
 
-  .prose-container h2 {
-    font-size: 1.35rem;
-    margin: 14px 0 10px 0;
+  .main-title {
+    font-size: 1.65rem;
   }
 
-  .prose-container h3 {
-    font-size: 1.15rem;
-    margin: 12px 0 8px 0;
+  .markdown-body h1 {
+    font-size: 1.5rem;
   }
 
-  .prose-container p {
+  .markdown-body h2 {
+    font-size: 1.25rem;
+  }
+
+  .markdown-body h3 {
+    font-size: 1.1rem;
+  }
+
+  .markdown-body p {
     font-size: 0.95rem;
     line-height: 1.7;
     margin: 10px 0;
   }
 
-  .prose-container ul,
-  .prose-container ol {
+  .markdown-body ul,
+  .markdown-body ol {
     padding-left: 20px;
     margin: 10px 0;
   }
 
-  .prose-container li {
+  .markdown-body li {
     margin: 6px 0;
     font-size: 0.95rem;
   }
 
-  .prose-container pre {
+  .markdown-body pre {
     margin: 12px 0;
     overflow-x: auto;
+    border-radius: 10px !important;
+    padding: 14px !important;
   }
 
-  .prose-container code {
+  .markdown-body code:not(pre code) {
     font-size: 0.85rem;
   }
 
-  .prose-container img {
+  .markdown-body img {
     max-width: 100%;
     height: auto;
     margin: 12px 0;
@@ -1014,6 +1054,7 @@ pre code {
     display: none;
   }
 
+  /* Mobile bottom nav bar */
   .mobile-nav {
     display: flex;
     position: fixed;
@@ -1022,13 +1063,14 @@ pre code {
     right: 0;
     height: 64px;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-top: 1px solid var(--border-color);
     z-index: 1000;
-    padding: 0 12px;
+    padding: 0 16px;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .mobile-nav button {
@@ -1036,38 +1078,74 @@ pre code {
     border: none;
     color: var(--text-secondary);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    font-size: 10px;
+    gap: 6px;
+    font-size: 12px;
     font-weight: 500;
-    padding: 8px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
     transition: all 0.2s ease;
+    min-width: 70px;
+  }
+
+  .mobile-nav button span {
+    font-size: 12px;
   }
 
   .mobile-nav button i {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   .mobile-nav button:active {
     background: var(--hover-bg);
     color: var(--accent);
+    transform: scale(0.95);
   }
 
   .btn-vault {
     background: var(--accent) !important;
     color: white !important;
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
+    min-width: unset !important;
+    padding: 0 !important;
     border-radius: 50% !important;
-    margin-top: -24px;
-    box-shadow: 0 8px 16px var(--accent-muted);
+    margin-top: -20px;
+    box-shadow: 0 6px 20px var(--accent-muted);
+    flex-shrink: 0;
+  }
+
+  .btn-prev,
+  .btn-next {
+    flex: 1;
   }
 }
 
+/* Mobile nav is hidden by default on desktop — shown only in @media (<=768px) */
 .mobile-nav {
   display: none;
+}
+
+/* ============================================================================
+   SIDEBAR OVERLAY (tap outside to close on tablet/mobile)
+   ============================================================================ */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1999;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
 }

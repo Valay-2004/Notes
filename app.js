@@ -60,15 +60,17 @@ class MarkdownParser {
     const renderer = {
       blockquote: (token) => {
         const text = typeof token === "string" ? token : token.text || "";
-        const calloutMatch = text.match(/^\s*\[!(\w+)\]\s*(.*?)$/m);
+        const calloutMatch = text.match(/^\s*\[!(\w+)\](?:\s+(.+?))?\s*$/m);
 
         if (calloutMatch) {
           const type = calloutMatch[1].toLowerCase();
           const titleText =
-            calloutMatch[2] || type.charAt(0).toUpperCase() + type.slice(1);
-          let rawContent = text.replace(/^\s*\[!\w+\]\s*.*?\n?/, "");
-          // Remove any leading heading from callout content to avoid duplication
-          rawContent = rawContent.replace(/^#+\s+.+?\n?/, "");
+            calloutMatch[2]?.trim() ||
+            type.charAt(0).toUpperCase() + type.slice(1);
+          // Remove the [!TYPE] header line completely (first line of the blockquote)
+          let rawContent = text
+            .replace(/^[^\n]*\[!\w+\][^\n]*\n?/, "")
+            .trimStart();
 
           const calloutIcons = {
             note: "info",
@@ -86,15 +88,14 @@ class MarkdownParser {
           };
 
           const iconName = calloutIcons[type] || "info";
+          const contentHtml = rawContent ? marked.parse(rawContent) : "";
 
           return `<div class="callout" data-type="${type}">
             <div class="callout-title">
               <i data-lucide="${iconName}"></i>
               <span>${titleText}</span>
             </div>
-            <div class="callout-content">
-              ${marked.parse(rawContent)}
-            </div>
+            ${contentHtml ? `<div class="callout-content">${contentHtml}</div>` : ""}
           </div>`;
         }
 
@@ -246,6 +247,8 @@ const DOM = {
   btnVault: document.getElementById("btn-vault"),
   btnPrev: document.getElementById("btn-prev"),
   btnNext: document.getElementById("btn-next"),
+  btnPrevDesktop: document.getElementById("btn-prev-desktop"),
+  btnNextDesktop: document.getElementById("btn-next-desktop"),
   btnCopyLink: document.getElementById("btn-copy-link"),
 };
 
@@ -328,9 +331,17 @@ function showImageModal(src, alt = "") {
 }
 
 function toggleSidebar() {
-  if (!state.isMobile) return;
   state.sidebarOpen = !state.sidebarOpen;
-  DOM.sidebar.classList.toggle("open", state.sidebarOpen);
+
+  if (window.innerWidth > 1024) {
+    // Desktop: collapse sidebar by shrinking its width via CSS class on .app
+    DOM.container.classList.toggle("collapsed", !state.sidebarOpen);
+  } else {
+    // Tablet / Mobile: sidebar is position:fixed, slide in/out
+    DOM.sidebar.classList.toggle("open", state.sidebarOpen);
+    const overlay = document.getElementById("sidebar-overlay");
+    if (overlay) overlay.classList.toggle("active", state.sidebarOpen);
+  }
 }
 
 function toggleTOC() {
@@ -339,21 +350,13 @@ function toggleTOC() {
   DOM.tocSidebar.classList.toggle("open", state.tocOpen);
 }
 
-function toggleSidebar() {
-  if (state.isMobile) {
-    DOM.sidebar.classList.toggle("active");
-  } else {
-    DOM.container.classList.toggle("collapsed");
-  }
-}
-
 function closeSidebars() {
-  if (state.isMobile) {
-    DOM.sidebar.classList.remove("open");
-    DOM.tocSidebar.classList.remove("open");
-    state.sidebarOpen = false;
-    state.tocOpen = false;
-  }
+  DOM.sidebar.classList.remove("open");
+  DOM.tocSidebar.classList.remove("open");
+  state.sidebarOpen = false;
+  state.tocOpen = false;
+  const overlay = document.getElementById("sidebar-overlay");
+  if (overlay) overlay.classList.remove("active");
 }
 
 async function copyNoteLink() {
@@ -372,16 +375,30 @@ async function copyNoteLink() {
 
 function handleResize() {
   const wasMobile = state.isMobile;
+  const wasFixed = window.innerWidth <= 1024;
+
   state.isMobile = window.innerWidth <= 768;
+  const isNowFixed = window.innerWidth <= 1024;
+
+  if (isNowFixed && !wasFixed) {
+    // Going from desktop to tablet/mobile — close sidebar slide-in, clear .app.collapsed
+    DOM.sidebar.classList.remove("open");
+    DOM.container.classList.remove("collapsed");
+    state.sidebarOpen = false;
+    const overlay = document.getElementById("sidebar-overlay");
+    if (overlay) overlay.classList.remove("active");
+  } else if (!isNowFixed && wasFixed) {
+    // Going from tablet/mobile to desktop — restore sidebar (no .collapsed by default)
+    DOM.sidebar.classList.remove("open");
+    DOM.container.classList.remove("collapsed");
+    state.sidebarOpen = true;
+    const overlay = document.getElementById("sidebar-overlay");
+    if (overlay) overlay.classList.remove("active");
+  }
 
   if (state.isMobile && !wasMobile) {
-    DOM.sidebar.classList.remove("open");
     DOM.tocSidebar.classList.remove("open");
-    state.sidebarOpen = false;
     state.tocOpen = false;
-  } else if (!state.isMobile && wasMobile) {
-    DOM.sidebar.classList.add("open");
-    state.sidebarOpen = true;
   }
 }
 
@@ -872,14 +889,17 @@ function setupButtonHandlers() {
     ui.toggleSidebar();
   });
 
-  DOM.btnVault.addEventListener("click", () => {
-    ui.toggleSidebar();
-  });
+  if (DOM.btnVault) {
+    DOM.btnVault.addEventListener("click", () => {
+      ui.toggleSidebar();
+    });
+  }
 
   DOM.btnCopyLink.addEventListener("click", () => {
     ui.copyNoteLink();
   });
 
+  // Mobile bottom nav
   if (DOM.btnPrev) {
     DOM.btnPrev.addEventListener("click", () => {
       navigatePrevious();
@@ -888,6 +908,19 @@ function setupButtonHandlers() {
 
   if (DOM.btnNext) {
     DOM.btnNext.addEventListener("click", () => {
+      navigateNext();
+    });
+  }
+
+  // Desktop header nav
+  if (DOM.btnPrevDesktop) {
+    DOM.btnPrevDesktop.addEventListener("click", () => {
+      navigatePrevious();
+    });
+  }
+
+  if (DOM.btnNextDesktop) {
+    DOM.btnNextDesktop.addEventListener("click", () => {
       navigateNext();
     });
   }
@@ -957,6 +990,14 @@ async function initApp() {
     sidebarManager.render(state.manifest);
 
     initUIEffects();
+
+    // Wire up sidebar overlay: tap outside to close
+    const sidebarOverlay = document.getElementById("sidebar-overlay");
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener("click", () => {
+        ui.closeSidebars();
+      });
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const notePath = urlParams.get("note");
