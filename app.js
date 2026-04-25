@@ -752,15 +752,15 @@ function enhanceCodeBlocks() {
       position: absolute;
       top: 8px;
       right: 8px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 6px 10px;
+      background: var(--glass-bg);
+      color: hsl(var(--muted-foreground));
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px;
       cursor: pointer;
       font-size: 12px;
       opacity: 0;
-      transition: opacity 150ms ease;
+      transition: opacity 0.2s ease;
       z-index: 10;
     `;
 
