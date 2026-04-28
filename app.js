@@ -814,6 +814,14 @@ function enhanceInternalLinks() {
 
 function enhanceTables() {
   DOM.noteBody.querySelectorAll("table").forEach((table, index) => {
+    // Create wrapper for horizontal scrolling
+    if (!table.parentElement.classList.contains("table-wrapper")) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-wrapper";
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+
     table.style.borderCollapse = "collapse";
     table.querySelectorAll("th").forEach((th) => {
       th.style.textAlign = "left";
@@ -1058,8 +1066,37 @@ async function loadNote(path) {
     const title = markdownParser.extractTitle(markdown);
     const html = markdownParser.parse(markdown);
 
-    DOM.noteTitle.textContent = title;
+    // Get parent directory name and clean it
+    const parts = path.split("/");
+    let parentDir = parts.length > 1 ? parts[parts.length - 2] : "Vault";
+    // Remove leading numbers like "05. "
+    parentDir = parentDir.replace(/^\d+\.\s*/, "");
+
+    DOM.noteTitle.textContent = parentDir;
     DOM.noteBody.innerHTML = html;
+
+    // un-comment this to...
+    // // Remove the first H1 from the content if it exists to prevent repetition
+    // const firstH1 = DOM.noteBody.querySelector("h1");
+    // if (firstH1) {
+    //   firstH1.remove();
+    // }
+
+    // Render LaTeX math
+    if (typeof renderMathInElement === "function") {
+      renderMathInElement(DOM.noteBody, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    }
+
+    // If the first H1 in the note is the same as the title, we could hide it
+    // but the user just said they want the heading to be the directory name.
 
     const headings = DOM.noteBody.querySelectorAll("h1, h2, h3, h4, h5, h6");
     headings.forEach((el, i) => {
