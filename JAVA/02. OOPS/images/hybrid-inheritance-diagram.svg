@@ -1,0 +1,34 @@
+<svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Root: Animal -->
+  <rect x="250" y="20" width="100" height="60" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2" rx="5" />
+  <text x="300" y="55" font-size="12" font-weight="bold" text-anchor="middle" fill="#1B5E20">Animal</text>
+
+  <!-- Hierarchical Split -->
+  <line x1="300" y1="80" x2="150" y2="140" stroke="#2E7D32" stroke-width="2" />
+  <line x1="300" y1="80" x2="450" y2="140" stroke="#2E7D32" stroke-width="2" />
+
+  <!-- Child 1: Dog -->
+  <rect x="100" y="140" width="100" height="60" fill="#FFF3E0" stroke="#E65100" stroke-width="2" rx="5" />
+  <text x="150" y="175" font-size="12" font-weight="bold" text-anchor="middle" fill="#BF360C">Dog</text>
+
+  <!-- Child 2: Cat -->
+  <rect x="400" y="140" width="100" height="60" fill="#FFF3E0" stroke="#E65100" stroke-width="2" rx="5" />
+  <text x="450" y="175" font-size="12" font-weight="bold" text-anchor="middle" fill="#BF360C">Cat</text>
+
+  <!-- Multilevel Extension from Dog -->
+  <line x1="150" y1="200" x2="150" y2="260" stroke="#E65100" stroke-width="2" />
+  <rect x="100" y="260" width="100" height="60" fill="#FFFDE7" stroke="#FBC02D" stroke-width="2" rx="5" />
+  <text x="150" y="295" font-size="12" font-weight="bold" text-anchor="middle" fill="#F57F17">Labrador</text>
+
+  <!-- Brackets for explanation -->
+  <path d="M 50,20 L 50,200" stroke="#999" stroke-width="1" fill="none" />
+  <text x="45" y="110" font-size="11" transform="rotate(-90 45,110)" text-anchor="middle" fill="#666">Hierarchical</text>
+  
+  <path d="M 50,140 L 50,320" stroke="#999" stroke-width="1" fill="none" />
+  <text x="45" y="230" font-size="11" transform="rotate(-90 45,230)" text-anchor="middle" fill="#666">Multilevel</text>
+
+  <!-- Title -->
+  <text x="300" y="380" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Hybrid Inheritance</text>
+  <text x="300" y="405" font-size="12" text-anchor="middle" fill="#666">(Combination of Hierarchical and Multilevel Inheritance)</text>
+  <text x="300" y="425" font-size="11" text-anchor="middle" fill="#666">Note: Multiple inheritance via classes is not possible in Java</text>
+</svg>
