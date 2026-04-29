@@ -1047,12 +1047,19 @@ async function loadNote(path) {
       .join("/");
 
     // Build robust absolute URL relative to the app base
-    const baseUrl =
-      window.location.origin +
-      window.location.pathname.substring(
-        0,
-        window.location.pathname.lastIndexOf("/") + 1,
-      );
+    // On GitHub Pages: pathname is /Notes/ or /Notes/index.html
+    // We need to find the base directory (e.g., /Notes/)
+    let pathname = window.location.pathname;
+    // If pathname ends with a filename, go up one level
+    if (!pathname.endsWith("/")) {
+      pathname = pathname.substring(0, pathname.lastIndexOf("/") + 1);
+    }
+    // Ensure it ends with /
+    if (!pathname.endsWith("/")) {
+      pathname += "/";
+    }
+
+    const baseUrl = window.location.origin + pathname;
     const fetchUrl = `${baseUrl}${encodedPath}`;
     console.log(`Fetching URL: "${fetchUrl}"`);
 
