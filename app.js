@@ -98,9 +98,9 @@ class MarkdownParser {
             ${contentHtml ? `<div class="callout-content">${contentHtml}</div>` : ""}
           </div>`;
         }
-
-        const content = typeof token === "string" ? token : token.text;
-        return `<blockquote>${content}</blockquote>`;
+        // Return false to use default marked renderer for standard blockquotes.
+        // This ensures that child tokens (like inline code) are correctly parsed.
+        return false;
       },
 
       code: (tokenOrCode, language) => {
@@ -145,11 +145,14 @@ class MarkdownParser {
             .map((part) => encodeURIComponent(part))
             .join("/");
 
-          // Make the resolved path relative to the app base exactly like fetchUrl does
-          const baseUrl = window.location.pathname.substring(
-            0,
-            window.location.pathname.lastIndexOf("/") + 1,
-          );
+          // Build an origin-absolute base URL (works on GitHub Pages subdirectories too)
+          // e.g. https://user.github.io/Notes/ instead of just /Notes/
+          const baseUrl =
+            window.location.origin +
+            window.location.pathname.substring(
+              0,
+              window.location.pathname.lastIndexOf("/") + 1,
+            );
           src = baseUrl + src;
         }
         return `<img src="${src}" alt="${token.text}" title="${token.title || ""}" />`;
@@ -1064,6 +1067,11 @@ async function loadNote(path) {
     const markdown = await response.text();
 
     const title = markdownParser.extractTitle(markdown);
+
+    // Set state.currentNote BEFORE parsing so the image renderer
+    // can resolve relative image paths correctly on the first render.
+    state.currentNote = { path, title };
+
     const html = markdownParser.parse(markdown);
 
     // Get parent directory name and clean it
@@ -1117,7 +1125,7 @@ async function loadNote(path) {
 
     ui.createIcons();
 
-    state.currentNote = { path, title };
+    // state.currentNote was already set before parsing (see above)
 
     const url = new URL(window.location);
     url.searchParams.set("note", path);
