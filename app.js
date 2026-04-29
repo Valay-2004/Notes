@@ -318,9 +318,16 @@ function showImageModal(src, alt = "") {
   DOM.modalOverlay.appendChild(img);
   DOM.modalOverlay.classList.add("active");
 
+  // Define the keydown handler before closeModal so it can be removed on close.
+  const onKeyDown = (e) => {
+    if (e.key === "Escape") closeModal();
+  };
+
   const closeModal = () => {
     DOM.modalOverlay.classList.remove("active");
     DOM.modalOverlay.removeEventListener("click", onModalClick);
+    // Remove the keydown listener to prevent accumulation across multiple opens.
+    document.removeEventListener("keydown", onKeyDown);
   };
 
   const onModalClick = (e) => {
@@ -328,9 +335,7 @@ function showImageModal(src, alt = "") {
   };
 
   DOM.modalOverlay.addEventListener("click", onModalClick);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
-  });
+  document.addEventListener("keydown", onKeyDown);
 }
 
 function toggleSidebar() {
@@ -558,8 +563,15 @@ class SidebarManager {
 
   filter(query) {
     if (!query) {
+      // Restore all nav items.
       DOM.sidebarNav.querySelectorAll(".nav-item").forEach((item) => {
         item.style.display = "";
+      });
+      // Restore folder lists to their expand/collapse state.
+      DOM.sidebarNav.querySelectorAll("ul[data-folder-path]").forEach((ul) => {
+        ul.style.display = this.expandedFolders.has(ul.dataset.folderPath)
+          ? "block"
+          : "none";
       });
       return;
     }
@@ -567,7 +579,24 @@ class SidebarManager {
     const q = query.toLowerCase();
     DOM.sidebarNav.querySelectorAll(".nav-item").forEach((item) => {
       const text = item.textContent.toLowerCase();
-      item.style.display = text.includes(q) ? "" : "none";
+      const visible = text.includes(q);
+      item.style.display = visible ? "" : "none";
+
+      // When a matching item lives inside a collapsed folder list, walk up
+      // the DOM and force every ancestor folder <ul> to be visible so the
+      // result is actually reachable.
+      if (visible) {
+        let parent = item.parentElement;
+        while (parent && parent !== DOM.sidebarNav) {
+          if (
+            parent.tagName === "UL" &&
+            parent.dataset.folderPath !== undefined
+          ) {
+            parent.style.display = "block";
+          }
+          parent = parent.parentElement;
+        }
+      }
     });
   }
 
@@ -783,6 +812,10 @@ function enhanceCodeBlocks() {
         await navigator.clipboard.writeText(code);
         ui.showToast("Code copied!");
         button.innerHTML = '<i data-lucide="check"></i>';
+        // Render the check icon immediately, then revert after 1.5 s.
+        // Do NOT call createIcons() outside this block — it would instantly
+        // replace the check icon before the user can see it.
+        ui.createIcons();
         setTimeout(() => {
           button.innerHTML = '<i data-lucide="copy"></i>';
           ui.createIcons();
@@ -790,7 +823,6 @@ function enhanceCodeBlocks() {
       } catch (err) {
         ui.showToast("Failed to copy");
       }
-      ui.createIcons();
     });
 
     ui.createIcons();

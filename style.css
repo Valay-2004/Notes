@@ -139,7 +139,8 @@ body {
   width: 280px;
   display: flex;
   flex-direction: column;
-  background: var(--bg-card);
+  /* --bg-card was never defined in any theme; use the standard glass surface. */
+  background: var(--glass-bg);
   border-right: 1px solid var(--border-color);
   z-index: 1000;
   transition:
@@ -842,6 +843,14 @@ pre code {
 
 .toc-content a:hover {
   color: var(--accent);
+  transform: translateX(4px);
+}
+
+/* Active TOC item — set by scroll-tracking in TOCManager.updateOnScroll().
+   Without this rule the class is applied but produces no visible effect. */
+.toc-item.active > a {
+  color: var(--accent);
+  font-weight: 600;
   transform: translateX(4px);
 }
 

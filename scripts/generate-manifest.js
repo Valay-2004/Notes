@@ -78,17 +78,10 @@ function crawlDirectory(dir, relativePath = "") {
   return sortItems(items);
 }
 
-// Generate and write manifest
-try {
-  const manifest = crawlDirectory(ROOT_DIR);
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(manifest, null, 2));
-  console.log(`✓ Manifest generated successfully at: ${OUTPUT_FILE}`);
-  console.log(`  Total items indexed: ${getItemCount(manifest)}`);
-} catch (err) {
-  console.error("✗ Failed to generate manifest:", err.message);
-  process.exit(1);
-}
-
+/**
+ * Recursively counts the total number of files in the manifest.
+ * Defined before its call site to avoid reliance on function hoisting.
+ */
 function getItemCount(items) {
   let count = 0;
   items.forEach((item) => {
@@ -98,4 +91,15 @@ function getItemCount(items) {
     }
   });
   return count;
+}
+
+// Generate and write manifest
+try {
+  const manifest = crawlDirectory(ROOT_DIR);
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(manifest, null, 2));
+  console.log(`✓ Manifest generated successfully at: ${OUTPUT_FILE}`);
+  console.log(`  Total items indexed: ${getItemCount(manifest)}`);
+} catch (err) {
+  console.error("✗ Failed to generate manifest:", err.message);
+  process.exit(1);
 }
