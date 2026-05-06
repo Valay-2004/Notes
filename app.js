@@ -235,21 +235,16 @@ const DOM = {
   main: document.querySelector(".main-content"),
   header: document.querySelector(".header"),
   noteContent: document.getElementById("note-content"),
-  noteTitle: document.getElementById("note-title"),
   noteBody: document.getElementById("note-body"),
   breadcrumb: document.getElementById("breadcrumb"),
   sidebarNav: document.getElementById("sidebar-nav"),
   tocNav: document.getElementById("toc-nav"),
   tocSidebar: document.getElementById("toc-sidebar"),
-  mobileNav: document.getElementById("mobile-nav"),
   modalOverlay: document.getElementById("modal-overlay"),
   toastContainer: document.getElementById("toast-container"),
   search: document.getElementById("sidebar-search"),
   btnTheme: document.getElementById("btn-theme"),
   btnSidebarToggle: document.getElementById("btn-sidebar-toggle"),
-  btnVault: document.getElementById("btn-vault"),
-  btnPrev: document.getElementById("btn-prev"),
-  btnNext: document.getElementById("btn-next"),
   btnPrevDesktop: document.getElementById("btn-prev-desktop"),
   btnNextDesktop: document.getElementById("btn-next-desktop"),
   btnCopyLink: document.getElementById("btn-copy-link"),
@@ -932,28 +927,9 @@ function setupButtonHandlers() {
     ui.toggleSidebar();
   });
 
-  if (DOM.btnVault) {
-    DOM.btnVault.addEventListener("click", () => {
-      ui.toggleSidebar();
-    });
-  }
-
   DOM.btnCopyLink.addEventListener("click", () => {
     ui.copyNoteLink();
   });
-
-  // Mobile bottom nav
-  if (DOM.btnPrev) {
-    DOM.btnPrev.addEventListener("click", () => {
-      navigatePrevious();
-    });
-  }
-
-  if (DOM.btnNext) {
-    DOM.btnNext.addEventListener("click", () => {
-      navigateNext();
-    });
-  }
 
   // Desktop header nav
   if (DOM.btnPrevDesktop) {
@@ -967,6 +943,15 @@ function setupButtonHandlers() {
       navigateNext();
     });
   }
+
+  // Escape key: close sidebar on mobile / tablet
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (state.sidebarOpen && window.innerWidth <= 1024) {
+        ui.closeSidebars();
+      }
+    }
+  });
 }
 
 function getAllNotes(items = state.manifest, memo = []) {
@@ -1119,15 +1104,9 @@ async function loadNote(path) {
     // Remove leading numbers like "05. "
     parentDir = parentDir.replace(/^\d+\.\s*/, "");
 
-    DOM.noteTitle.textContent = parentDir;
-    DOM.noteBody.innerHTML = html;
-
-    // un-comment this to...
-    // // Remove the first H1 from the content if it exists to prevent repetition
-    // const firstH1 = DOM.noteBody.querySelector("h1");
-    // if (firstH1) {
-    //   firstH1.remove();
-    // }
+    // Inject title as scrollable h1 inside markdown-body, then content
+    DOM.noteBody.innerHTML =
+      `<h1 class="note-injected-title">${parentDir}</h1>` + html;
 
     // Render LaTeX math
     if (typeof renderMathInElement === "function") {
@@ -1142,9 +1121,6 @@ async function loadNote(path) {
       });
     }
 
-    // If the first H1 in the note is the same as the title, we could hide it
-    // but the user just said they want the heading to be the directory name.
-
     const headings = DOM.noteBody.querySelectorAll("h1, h2, h3, h4, h5, h6");
     headings.forEach((el, i) => {
       if (!el.id) el.id = `heading-${i}`;
@@ -1155,6 +1131,11 @@ async function loadNote(path) {
     ui.updateBreadcrumb(path);
 
     sidebarManager.setActive(path);
+    // Scroll active sidebar item into view
+    const activeLink = document.querySelector(
+      `[data-path="${path}"][data-type="file"]`,
+    );
+    if (activeLink) activeLink.scrollIntoView({ block: "nearest" });
 
     effects.enhanceCodeBlocks();
     effects.enhanceImages();
@@ -1162,9 +1143,34 @@ async function loadNote(path) {
     effects.enhanceTables();
     effects.enhanceAnchors();
 
-    ui.createIcons();
+    // Append inline Previous / Next navigation block
+    const allNotes = getAllNotes();
+    const currentIndex = allNotes.indexOf(path);
+    const hasPrev = currentIndex > 0;
+    const hasNext = currentIndex >= 0 && currentIndex < allNotes.length - 1;
 
-    // state.currentNote was already set before parsing (see above)
+    const navBlock = document.createElement("div");
+    navBlock.className = "note-nav";
+    navBlock.innerHTML = `
+      <button class="note-nav-btn btn-prev-inline" ${hasPrev ? "" : "disabled"}>
+        <i data-lucide="chevron-left"></i>
+        <span>Previous</span>
+      </button>
+      <button class="note-nav-btn btn-next-inline" ${hasNext ? "" : "disabled"}>
+        <span>Next</span>
+        <i data-lucide="chevron-right"></i>
+      </button>
+    `;
+    DOM.noteBody.appendChild(navBlock);
+
+    const btnPrevInline = navBlock.querySelector(".btn-prev-inline");
+    const btnNextInline = navBlock.querySelector(".btn-next-inline");
+    if (btnPrevInline && hasPrev)
+      btnPrevInline.addEventListener("click", navigatePrevious);
+    if (btnNextInline && hasNext)
+      btnNextInline.addEventListener("click", navigateNext);
+
+    ui.createIcons();
 
     const url = new URL(window.location);
     url.searchParams.set("note", path);
@@ -1178,16 +1184,16 @@ async function loadNote(path) {
 }
 
 function showWelcome() {
-  DOM.noteTitle.textContent = "Welcome to My Notes";
   DOM.noteBody.innerHTML = `
-    <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-      <p style="font-size: 18px; margin-bottom: 12px;">📃 Select a note to begin</p>
-      <p style="font-size: 14px;">Choose from the file tree on the left to start reading</p>
+    <div class="welcome-msg">
+      <i data-lucide="book-open"></i>
+      <h2>Welcome to Vault</h2>
+      <p>Select a note from the sidebar to start reading.</p>
     </div>
   `;
   tocManager.generate(DOM.noteBody);
   DOM.breadcrumb.textContent = "Vault";
-
+  ui.createIcons();
   state.currentNote = null;
   sidebarManager.setActive(null);
 }

@@ -313,7 +313,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 12px 12px 12px 0;
+  padding: 12px;
   min-width: 0;
 }
 
@@ -401,12 +401,16 @@ body {
   padding-bottom: 36px;
 }
 
-.main-title {
-  font-size: 2.1rem;
+/* .main-title is removed — title is now injected inside .markdown-body as .note-injected-title */
+.note-injected-title {
+  font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 24px;
   color: var(--text-primary);
-  line-height: 1.15;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .markdown-body {
@@ -414,9 +418,9 @@ body {
   overflow-y: auto;
   font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.8;
   word-wrap: break-word;
-  padding-bottom: 36px;
+  padding-bottom: 2rem;
 }
 
 .markdown-body > *:not(:last-child) {
@@ -509,12 +513,14 @@ body {
 }
 
 .markdown-body blockquote {
-  border-left: 4px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  background: var(--accent-muted);
   margin-left: 0;
-  padding-left: 1rem;
-  color: var(--text-muted);
+  padding: 0.75rem 1rem 0.75rem 1.2rem;
+  color: var(--text-secondary);
   font-style: italic;
   margin: 1.4rem 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .markdown-body code:not(pre code) {
@@ -531,7 +537,7 @@ body {
 pre {
   background: var(--code-bg) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: 14px !important;
+  border-radius: 0.75rem !important;
   padding: 20px !important;
   margin: 1.4rem 0 !important;
   overflow-x: auto;
@@ -668,8 +674,8 @@ pre code {
   border-left: 4px solid var(--accent);
   background: rgba(99, 102, 241, 0.06);
   padding: 0;
-  margin: 1.6rem 0;
-  border-radius: 8px;
+  margin: 1.2rem 0;
+  border-radius: 0.625rem;
   overflow: hidden;
 }
 
@@ -692,7 +698,7 @@ pre code {
 }
 
 .callout-content {
-  padding: 16px;
+  padding: 1rem 1.25rem;
   color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.7;
@@ -797,6 +803,54 @@ pre code {
 .callout[data-type="quote"] .callout-title {
   background: rgba(100, 116, 139, 0.1);
   color: #475569;
+}
+
+/* ============================================================================
+   INLINE NOTE NAVIGATION (prev/next at bottom of content)
+   ============================================================================ */
+.note-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding: 1.25rem 0 0.5rem;
+  border-top: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.note-nav-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.note-nav-btn i {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+.note-nav-btn:hover:not(:disabled) {
+  background: var(--accent-muted);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--glass-glow);
+}
+
+.note-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .toc-sidebar {
@@ -1028,8 +1082,7 @@ pre code {
   }
 
   .main-content {
-    padding: 8px 8px 0;
-    padding-bottom: 80px;
+    padding: 8px;
     overflow-y: auto;
     min-height: 100vh;
   }
@@ -1057,11 +1110,11 @@ pre code {
 
   .markdown-body {
     font-size: 0.96rem;
-    line-height: 1.72;
+    line-height: 1.75;
   }
 
-  .main-title {
-    font-size: 1.65rem;
+  .note-injected-title {
+    font-size: 1.6rem;
   }
 
   .markdown-body h1 {
@@ -1127,80 +1180,19 @@ pre code {
     display: none;
   }
 
-  /* Mobile bottom nav bar */
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-top: 1px solid var(--border-color);
-    z-index: 1000;
-    padding: 0 16px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+  .note-nav {
+    flex-direction: column;
   }
 
-  .mobile-nav button {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  .note-nav-btn {
+    width: 100%;
     justify-content: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 8px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 70px;
-  }
-
-  .mobile-nav button span {
-    font-size: 12px;
-  }
-
-  .mobile-nav button i {
-    width: 18px;
-    height: 18px;
-  }
-
-  .mobile-nav button:active {
-    background: var(--hover-bg);
-    color: var(--accent);
-    transform: scale(0.95);
-  }
-
-  .btn-vault {
-    background: var(--accent) !important;
-    color: white !important;
-    width: 52px;
-    height: 52px;
-    min-width: unset !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    margin-top: -20px;
-    box-shadow: 0 6px 20px var(--accent-muted);
-    flex-shrink: 0;
-  }
-
-  .btn-prev,
-  .btn-next {
-    flex: 1;
   }
 }
 
-/* Mobile nav is hidden by default on desktop — shown only in @media (<=768px) */
+/* Mobile nav is gone — replaced by inline .note-nav inside .markdown-body */
 .mobile-nav {
-  display: none;
+  display: none !important;
 }
 
 /* ============================================================================
