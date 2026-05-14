@@ -56,16 +56,16 @@ function crawlDirectory(dir, relativePath = "") {
         if (children.length > 0) {
           items.push({
             type: "folder",
-            name: file,
+            name: file.trim(),
             path: relPath.replace(/\\/g, "/"),
             children: children,
           });
         }
-      } else if (file.endsWith(".md") && !SKIP_FILES.includes(file)) {
+      } else if (file.trim().toLowerCase().endsWith(".md") && !SKIP_FILES.includes(file.trim())) {
         // Add markdown files
         items.push({
           type: "file",
-          name: file,
+          name: file.trim(),
           title: extractTitle(fullPath),
           path: relPath.replace(/\\/g, "/"),
         });
