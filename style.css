@@ -1081,10 +1081,20 @@ pre code {
     transform: translateX(0);
   }
 
+  /* Main content becomes a flex column, no scrolling on itself */
   .main-content {
-    padding: 8px;
-    overflow-y: auto;
-    min-height: 100vh;
+    padding: 8px 8px 0;
+    overflow: hidden; /* let .markdown-body scroll instead */
+    height: 100vh; /* occupy full viewport height */
+    display: flex;
+    flex-direction: column;
+    min-height: auto; /* override any min-height */
+  }
+
+  /* Ensure no horizontal scrollbar */
+  .main-content,
+  .prose-container {
+    overflow-x: hidden;
   }
 
   .header {
@@ -1110,7 +1120,9 @@ pre code {
 
   .markdown-body {
     font-size: 0.96rem;
-    line-height: 1.75;
+    line-height: 1.72;
+    /* Reduce bottom padding so the nav isn't pushed out */
+    padding-bottom: 0.25rem;
   }
 
   .note-injected-title {
@@ -1182,17 +1194,13 @@ pre code {
 
   .note-nav {
     flex-direction: column;
+    margin-top: 1.5rem;
   }
 
   .note-nav-btn {
     width: 100%;
     justify-content: center;
   }
-}
-
-/* Mobile nav is gone — replaced by inline .note-nav inside .markdown-body */
-.mobile-nav {
-  display: none !important;
 }
 
 /* ============================================================================
