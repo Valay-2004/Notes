@@ -164,6 +164,19 @@
             "path": "JAVA/06. Collection Framework/05. Questions for Collections.md"
           }
         ]
+      },
+      {
+        "type": "folder",
+        "name": "07. Maths in DSA",
+        "path": "JAVA/07. Maths in DSA",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Maths for DSA Theory.md",
+            "title": "Theory for Mathematics in DSA",
+            "path": "JAVA/07. Maths in DSA/01. Maths for DSA Theory.md"
+          }
+        ]
       }
     ]
   }
