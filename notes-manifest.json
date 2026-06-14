@@ -175,6 +175,18 @@
             "name": "01. Maths for DSA Theory.md",
             "title": "Theory for Mathematics in DSA",
             "path": "JAVA/07. Maths in DSA/01. Maths for DSA Theory.md"
+          },
+          {
+            "type": "file",
+            "name": "02. Maths for DSA Problems Part 1.md",
+            "title": "02. Maths for DSA Problems Part 1",
+            "path": "JAVA/07. Maths in DSA/02. Maths for DSA Problems Part 1.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Maths For DSA Modular Arithmetic.md",
+            "title": "03. Maths For DSA Modular Arithmetic",
+            "path": "JAVA/07. Maths in DSA/03. Maths For DSA Modular Arithmetic.md"
           }
         ]
       }
