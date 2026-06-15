@@ -465,10 +465,6 @@ body {
   font-size: 1rem;
 }
 
-.markdown-body p {
-  margin-bottom: 1rem;
-}
-
 .markdown-body strong {
   color: var(--text-primary);
   font-weight: 700;
