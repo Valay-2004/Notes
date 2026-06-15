@@ -178,15 +178,21 @@
           },
           {
             "type": "file",
-            "name": "02. Maths for DSA Problems Part 1.md",
-            "title": "02. Maths for DSA Problems Part 1",
-            "path": "JAVA/07. Maths in DSA/02. Maths for DSA Problems Part 1.md"
+            "name": "02. Maths for DSA Number System.md",
+            "title": "02. Maths for DSA Number System",
+            "path": "JAVA/07. Maths in DSA/02. Maths for DSA Number System.md"
           },
           {
             "type": "file",
-            "name": "03. Maths For DSA Modular Arithmetic.md",
-            "title": "03. Maths For DSA Modular Arithmetic",
-            "path": "JAVA/07. Maths in DSA/03. Maths For DSA Modular Arithmetic.md"
+            "name": "03. Maths for DSA Modular Arithmetic.md",
+            "title": "03. Maths for DSA Modular Arithmetic",
+            "path": "JAVA/07. Maths in DSA/03. Maths for DSA Modular Arithmetic.md"
+          },
+          {
+            "type": "file",
+            "name": "04. Comprehensive Practice Problems.md",
+            "title": "Comprehensive Practice Problems: Maths for DSA",
+            "path": "JAVA/07. Maths in DSA/04. Comprehensive Practice Problems.md"
           }
         ]
       }
