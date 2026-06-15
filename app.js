@@ -1108,25 +1108,20 @@ async function loadNote(path) {
     DOM.noteBody.innerHTML =
       `<h1 class="note-injected-title">${parentDir}</h1>` + html;
 
-    // Render LaTeX math
-    if (typeof renderMathInElement === "function") {
-      renderMathInElement(DOM.noteBody, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false },
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true },
-        ],
-        throwOnError: false,
-      });
-    }
-
     const headings = DOM.noteBody.querySelectorAll("h1, h2, h3, h4, h5, h6");
     headings.forEach((el, i) => {
       if (!el.id) el.id = `heading-${i}`;
     });
 
+    // Generate TOC before MathJax parses the body so we get clean text content
     tocManager.generate(DOM.noteBody);
+
+    // Render LaTeX math using MathJax for both the body and the TOC
+    if (window.MathJax) {
+      MathJax.typesetPromise([DOM.noteBody, DOM.tocNav]).catch((err) => {
+        console.error("MathJax rendering error:", err);
+      });
+    }
 
     ui.updateBreadcrumb(path);
 
