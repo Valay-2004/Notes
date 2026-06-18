@@ -1218,3 +1218,40 @@ pre code {
   display: block;
   opacity: 1;
 }
+
+/* ============================================================================
+   FIX 1 — MathJax overflow on mobile (no unwanted scroll boxes)
+   ============================================================================ */
+
+/* Block math: only scroll if it genuinely overflows */
+mjx-container[display="true"] {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.25rem 0;
+  /* Remove any fixed scrollbar appearance */
+  scrollbar-width: none; /* Firefox: hide unless needed */
+}
+
+mjx-container[display="true"]::-webkit-scrollbar {
+  height: 3px; /* Chrome: tiny scrollbar, only shows when needed */
+}
+
+/* Inline math: no scroll box at all, just clip gracefully */
+mjx-container:not([display="true"]) {
+  display: inline;
+  overflow: visible;
+  vertical-align: middle;
+}
+
+/* The inner math element should never force width beyond its container */
+mjx-container[display="true"] > svg,
+mjx-container[display="true"] mjx-math {
+  max-width: none; /* let it be its natural size inside the scroll */
+}
+
+.markdown-body {
+  overflow-x: hidden;
+}
