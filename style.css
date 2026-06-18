@@ -256,6 +256,10 @@ body {
   border-color: var(--accent);
 }
 
+.glass-btn:active {
+  transform: scale(0.98);
+}
+
 .sidebar-nav ul,
 .toc-content ul {
   list-style: none;
@@ -337,16 +341,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
-  width: 38px;
-  height: 38px;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   padding: 0;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .btn-icon:hover {
   color: var(--accent);
   background: var(--hover-bg);
+}
+
+.btn-icon:active {
+  transform: scale(0.95);
 }
 
 .btn-icon i {
@@ -366,7 +376,9 @@ body {
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .content-wrapper {
@@ -824,6 +836,7 @@ pre code {
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -842,6 +855,10 @@ pre code {
   border-color: var(--accent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px var(--glass-glow);
+}
+
+.note-nav-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .note-nav-btn:disabled {
@@ -1175,6 +1192,18 @@ pre code {
     gap: 4px;
   }
 
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .btn-icon i {
+    width: 18px;
+    height: 18px;
+  }
+
   #btn-prev-desktop,
   #btn-next-desktop {
     display: none;
@@ -1189,13 +1218,17 @@ pre code {
   }
 
   .note-nav {
-    flex-direction: column;
-    margin-top: 1.5rem;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
+    gap: 0.75rem;
   }
 
   .note-nav-btn {
-    width: 100%;
-    justify-content: center;
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
   }
 }
 
