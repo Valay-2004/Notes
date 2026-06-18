@@ -1055,8 +1055,6 @@ async function loadNote(path) {
   try {
     ui.showLoading();
 
-    console.log(`Loading note from path: "${path}"`);
-
     // Ensure path is correctly encoded for fetch while preserving "/"
     const encodedPath = path
       .split("/")
@@ -1078,7 +1076,6 @@ async function loadNote(path) {
 
     const baseUrl = window.location.origin + pathname;
     const fetchUrl = `${baseUrl}${encodedPath}`;
-    console.log(`Fetching URL: "${fetchUrl}"`);
 
     const response = await fetch(fetchUrl);
     if (!response.ok) {
