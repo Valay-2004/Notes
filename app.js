@@ -1155,6 +1155,25 @@ async function loadNote(path) {
     `;
     DOM.noteBody.appendChild(navBlock);
 
+    // Append page footer (copyright + icon links), inside the scrollable content
+    const existingFooter = DOM.noteBody.querySelector(".content-footer");
+    if (existingFooter) existingFooter.remove();
+
+    const footerBlock = document.createElement("div");
+    footerBlock.className = "content-footer";
+    footerBlock.innerHTML = `
+  <span class="content-footer-copy">© ${new Date().getFullYear()} VALAY Notes</span>
+  <div class="content-footer-links">
+    <a href="#" title="Settings" class="content-footer-icon"><i data-lucide="settings"></i></a>
+    <span class="content-footer-dot">•</span>
+    <a href="#" title="Like" class="content-footer-icon content-footer-like"><i data-lucide="heart"></i></a>
+    <a href="https://github.com/Valay-2004/Notes" target="_blank" rel="noopener" title="GitHub" class="content-footer-icon"><i data-lucide="github"></i></a>
+    <a href="#" title="LinkedIn" class="content-footer-icon"><i data-lucide="linkedin"></i></a>
+  </div>
+`;
+    DOM.noteBody.appendChild(footerBlock);
+    ui.createIcons();
+
     const btnPrevInline = navBlock.querySelector(".btn-prev-inline");
     const btnNextInline = navBlock.querySelector(".btn-next-inline");
     if (btnPrevInline && hasPrev)
