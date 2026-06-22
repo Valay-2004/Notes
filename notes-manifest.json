@@ -195,6 +195,19 @@
             "path": "JAVA/07. Maths in DSA/04. Comprehensive Practice Problems.md"
           }
         ]
+      },
+      {
+        "type": "folder",
+        "name": "08. Bit Manipulation",
+        "path": "JAVA/08. Bit Manipulation",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Introduction.md",
+            "title": "01. Introduction",
+            "path": "JAVA/08. Bit Manipulation/01. Introduction.md"
+          }
+        ]
       }
     ]
   }
