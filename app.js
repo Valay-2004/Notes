@@ -7,13 +7,14 @@ const THEMES = [
   "theme-ocean-dark",
   "theme-tokyo-night",
   "theme-obsidian-blue",
+  "theme-amoled",
 ];
 const THEME_STORAGE_KEY = "vault-current-theme";
 
 class ThemeManager {
   constructor() {
     this.currentTheme = this.loadTheme();
-    this.applyTheme(this.currentTheme);
+    this.applyTheme(this.currentTheme, { animate: false });
   }
 
   loadTheme() {
@@ -21,10 +22,34 @@ class ThemeManager {
     return saved && THEMES.includes(saved) ? saved : THEMES[0];
   }
 
-  applyTheme(theme) {
-    document.body.className = theme;
-    this.currentTheme = theme;
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  applyTheme(theme, options = {}) {
+    const safeTheme = THEMES.includes(theme) ? theme : THEMES[0];
+    const body = document.body;
+
+    if (!body) return;
+
+    const previousTheme = this.currentTheme;
+
+    body.classList.remove(...THEMES);
+    body.classList.add(safeTheme);
+    body.dataset.theme = safeTheme;
+
+    if (
+      options.animate !== false &&
+      previousTheme &&
+      previousTheme !== safeTheme
+    ) {
+      body.classList.remove("theme-switching");
+      void body.offsetWidth;
+      body.classList.add("theme-switching");
+      window.clearTimeout(this._themeResetTimer);
+      this._themeResetTimer = window.setTimeout(() => {
+        body.classList.remove("theme-switching");
+      }, 260);
+    }
+
+    this.currentTheme = safeTheme;
+    localStorage.setItem(THEME_STORAGE_KEY, safeTheme);
   }
 
   nextTheme() {
@@ -107,12 +132,16 @@ class MarkdownParser {
         const isToken = typeof tokenOrCode === "object";
         const code = isToken ? tokenOrCode.text : tokenOrCode;
         const lang = (isToken ? tokenOrCode.lang : language) || "text";
+        const safeLang =
+          String(lang)
+            .toLowerCase()
+            .replace(/[^a-z0-9+_-]/g, "") || "text";
 
         try {
-          const highlighted = this.highlightCode(code, lang);
-          return `<pre class="language-${lang}"><code class="language-${lang}">${highlighted}</code></pre>`;
+          const highlighted = this.highlightCode(code, safeLang);
+          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${safeLang}</span></div><pre class="language-${safeLang}"><code class="language-${safeLang}">${highlighted}</code></pre></div>`;
         } catch (e) {
-          return `<pre class="language-${lang}"><code class="language-${lang}">${code}</code></pre>`;
+          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${safeLang}</span></div><pre class="language-${safeLang}"><code class="language-${safeLang}">${code}</code></pre></div>`;
         }
       },
 
