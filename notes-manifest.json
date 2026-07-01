@@ -212,6 +212,12 @@
             "name": "02. Essential Bit Manipulation Techniques.md",
             "title": "02. Essential Bit Manipulation Techniques",
             "path": "JAVA/08. Bit Manipulation/02. Essential Bit Manipulation Techniques.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Questions.md",
+            "title": "03. Questions",
+            "path": "JAVA/08. Bit Manipulation/03. Questions.md"
           }
         ]
       }
