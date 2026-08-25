@@ -222,5 +222,37 @@
         ]
       }
     ]
+  },
+  {
+    "type": "folder",
+    "name": "SQL",
+    "path": "SQL",
+    "children": [
+      {
+        "type": "folder",
+        "name": "01. Beginner Level",
+        "path": "SQL/01. Beginner Level",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Introduction to SQL.md",
+            "title": "01. Introduction to SQL",
+            "path": "SQL/01. Beginner Level/01. Introduction to SQL.md"
+          },
+          {
+            "type": "file",
+            "name": "02. Setup Your Environment.md",
+            "title": "02. Setup Your Environment",
+            "path": "SQL/01. Beginner Level/02. Setup Your Environment.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Retrieving Data with SELECT.md",
+            "title": "03. Retrieving Data with SELECT",
+            "path": "SQL/01. Beginner Level/03. Retrieving Data with SELECT.md"
+          }
+        ]
+      }
+    ]
   }
 ]
