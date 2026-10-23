@@ -192,29 +192,52 @@ class MarkdownParser {
   }
 
   highlightCode(code, language) {
-    if (!language) return code;
+    // Lesson 4: safe fallback — escape HTML instead of falling back to JS grammar
+    const escapeHtml = (s) =>
+      String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+    if (!language) return escapeHtml(code);
     try {
-      const prismLang = Prism.languages[language] || Prism.languages.javascript;
-      if (prismLang) {
-        return Prism.highlight(code, prismLang, language);
+      const grammar = Prism.languages[language];
+      if (grammar) {
+        return Prism.highlight(code, grammar, language);
       }
     } catch (e) {
       console.warn("Prism highlighting failed:", e);
     }
-    return code;
+    return escapeHtml(code);
   }
 
   preprocess(markdown) {
-    // Strip YAML frontmatter
+    // Strip YAML frontmatter (outside code fences)
     markdown = markdown.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, "");
 
-    markdown = markdown.replace(
-      /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
-      (match, path, alias) => {
-        const text = alias || path;
-        return `[${text}](note://${path.trim()})`;
-      },
-    );
+    // Lesson 3: convert wikilinks outside code fences only
+    const WIKILINK = /(!)?\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g;
+
+    function convertWikilinks(md) {
+      return md.replace(WIKILINK, (m, bang, name, alias) => {
+        name = name.trim();
+        if (bang) {
+          // Image embed: ![[name]]
+          return `![${alias || name}](note://${encodeURIComponent(name)})`;
+        }
+        // Lesson 3: look up by normalised name
+        const path = state.noteIndex.get(name.toLowerCase());
+        const text = alias || name;
+        return path ? `[${text}](note://${encodeURIComponent(path)})` : text;
+      });
+    }
+
+    // Split on code fences to avoid altering wikilinks inside them
+    markdown = markdown
+      .split(/(```[\s\S]*?```)/g)
+      .map((part, i) => (i % 2 ? part : convertWikilinks(part)))
+      .join("");
 
     return markdown;
   }
@@ -222,9 +245,7 @@ class MarkdownParser {
   parse(markdown) {
     const processed = this.preprocess(markdown);
     const html = marked.parse(processed);
-
-    setTimeout(() => Prism.highlightAll(), 0);
-
+    // Lesson 4: removed Prism.highlightAll() — handled per-block in highlightCode
     return html;
   }
 
@@ -282,8 +303,8 @@ const DOM = {
 const state = {
   manifest: null,
   currentNote: null,
-  noteHistory: [],
-  historyIndex: -1,
+  validPaths: new Set(),   // Lesson 1: allowlist of valid paths
+  noteIndex: new Map(),    // Lesson 3: name → path index for wikilinks
   isMobile: window.innerWidth <= 768,
   sidebarOpen: window.innerWidth > 768,
   tocOpen: false,
@@ -300,12 +321,9 @@ function showLoading() {
 }
 
 function showError(message) {
-  DOM.noteBody.innerHTML = `
-    <div class="loading-state">
-      <i data-lucide="alert-circle"></i>
-      <p>${message}</p>
-    </div>
-  `;
+  // Lesson 1: never echo user input as HTML — use textContent
+  DOM.noteBody.innerHTML = `<div class="loading-state"><i data-lucide="alert-circle"></i><p></p></div>`;
+  DOM.noteBody.querySelector("p").textContent = message;
   lucide.createIcons();
 }
 
@@ -789,9 +807,20 @@ class TOCManager {
 
 const tocManager = new TOCManager();
 
-DOM.noteBody.addEventListener("scroll", () => {
-  tocManager.updateOnScroll(DOM.noteBody);
-});
+// Lesson 5: throttle scroll handler to one update per animation frame
+let _tocTicking = false;
+DOM.noteBody.addEventListener(
+  "scroll",
+  () => {
+    if (_tocTicking) return;
+    _tocTicking = true;
+    requestAnimationFrame(() => {
+      tocManager.updateOnScroll(DOM.noteBody);
+      _tocTicking = false;
+    });
+  },
+  { passive: true },
+);
 
 // ============================================================================
 // UI EFFECTS AND INTERACTIONS (ui-effects.js)
@@ -865,8 +894,9 @@ function enhanceInternalLinks() {
   DOM.noteBody.querySelectorAll('a[href^="note://"]').forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      const path = link.href.replace("note://", "");
-      loadNote(path);
+      // Lesson 3: use getAttribute to get the raw href, not the browser-resolved one
+      const raw = link.getAttribute("href").slice("note://".length);
+      loadNote(decodeURIComponent(raw));
     });
   });
 }
@@ -904,33 +934,7 @@ function enhanceAnchors() {
   });
 }
 
-function debounce(fn, delay) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
-}
-
-function throttle(fn, delay) {
-  let last = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - last >= delay) {
-      fn(...args);
-      last = now;
-    }
-  };
-}
-
-function fadeOutContent() {
-  DOM.noteBody.style.opacity = "0.5";
-  DOM.noteBody.style.transition = "opacity 150ms ease";
-}
-
-function fadeInContent() {
-  DOM.noteBody.style.opacity = "1";
-}
+// Lesson 5: dead code removed — debounce, throttle, fadeOutContent, fadeInContent were unused
 
 function setupKeyboardShortcuts() {
   document.addEventListener("keydown", (e) => {
@@ -1026,8 +1030,6 @@ window.effects = {
   enhanceInternalLinks,
   enhanceTables,
   enhanceAnchors,
-  fadeOutContent,
-  fadeInContent,
   getAllNotes,
   navigatePrevious,
   navigateNext,
@@ -1037,12 +1039,31 @@ window.effects = {
 // MAIN APPLICATION LOGIC (app.js)
 // ============================================================================
 
+// Lesson 1: build allowlist of valid paths from the manifest
+function collectPaths(items, out = new Set()) {
+  for (const item of items) {
+    if (item.type === "file") out.add(item.path);
+    else if (item.children) collectPaths(item.children, out);
+  }
+  return out;
+}
+
 async function initApp() {
   try {
     const response = await fetch("notes-manifest.json");
     if (!response.ok) throw new Error("Manifest not found");
 
     state.manifest = await response.json();
+
+    // Lesson 1: build path allowlist
+    state.validPaths = collectPaths(state.manifest);
+
+    // Lesson 3: build name → path index for wikilink resolution
+    state.noteIndex = new Map();
+    for (const p of state.validPaths) {
+      const name = p.split("/").pop().replace(/\.md$/i, "").toLowerCase();
+      state.noteIndex.set(name, p); // duplicate names: last one wins
+    }
 
     sidebarManager.render(state.manifest);
 
@@ -1060,15 +1081,17 @@ async function initApp() {
     const notePath = urlParams.get("note");
 
     if (notePath) {
-      loadNote(notePath);
+      // Lesson 2: initial load — don't push a duplicate history entry
+      loadNote(notePath, { push: false });
     } else {
       showWelcome();
     }
 
-    window.addEventListener("popstate", (e) => {
-      if (e.state && e.state.path) {
-        loadNote(e.state.path);
-      }
+    // Lesson 2: popstate — URL is the source of truth, never push
+    window.addEventListener("popstate", () => {
+      const path = new URLSearchParams(location.search).get("note");
+      if (path) loadNote(path, { push: false });
+      else showWelcome();
     });
   } catch (err) {
     console.error("Initialization error:", err);
@@ -1076,9 +1099,15 @@ async function initApp() {
   }
 }
 
-async function loadNote(path) {
+async function loadNote(path, { push = true } = {}) {
   if (!path) {
     showWelcome();
+    return;
+  }
+
+  // Lesson 1: reject paths not in the manifest allowlist
+  if (!state.validPaths.has(path)) {
+    ui.showError("Note not found.");
     return;
   }
   try {
@@ -1193,9 +1222,10 @@ async function loadNote(path) {
 
     ui.createIcons();
 
+    // Lesson 2: push only on user-initiated nav; use replaceState for popstate / initial load
     const url = new URL(window.location);
     url.searchParams.set("note", path);
-    window.history.pushState({ path }, title, url);
+    history[push ? "pushState" : "replaceState"]({ path }, "", url);
 
     DOM.noteBody.scrollTop = 0;
   } catch (err) {
