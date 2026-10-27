@@ -4,6 +4,12 @@ on:
     branches: [main]
     paths: ["**/*.md", "scripts/**"]
 
+# Cancel any in-progress run on the same branch so a rapid second push
+# doesn't commit a stale manifest on top of a newer one.
+concurrency:
+  group: manifest-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
