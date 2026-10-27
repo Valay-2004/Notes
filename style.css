@@ -4,6 +4,12 @@
   --accent: #4f46e5;
   --accent-hover: #6366f1;
   --accent-muted: rgba(99, 102, 241, 0.15);
+  --accent-light: rgba(
+    99,
+    102,
+    241,
+    0.18
+  ); /* TOC heading flash — MUST be defined */
   --bg-deep: #f8fafc;
   --bg-secondary: #eef2ff;
   --glass-bg: rgba(255, 255, 255, 0.75);
@@ -22,13 +28,20 @@
   --code-bg: rgba(248, 250, 252, 0.95);
   --border-color: rgba(148, 163, 184, 0.18);
   --hover-bg: rgba(99, 102, 241, 0.08);
+  /* Inline code colour — overridden per theme */
+  --inline-code-color: #be185d;
+  /* Font stack — overridden in theme-amoled */
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
 }
 
-body.theme-whiteseed,
 body.theme-white {
   --accent: #4338ca;
   --accent-hover: #6366f1;
   --accent-muted: rgba(67, 56, 202, 0.12);
+  --accent-light: rgba(67, 56, 202, 0.16);
   --bg-deep: #f8fafc;
   --bg-secondary: #eef2ff;
   --glass-bg: rgba(255, 255, 255, 0.8);
@@ -42,12 +55,14 @@ body.theme-white {
   --code-bg: rgba(248, 250, 252, 0.96);
   --border-color: rgba(148, 163, 184, 0.18);
   --hover-bg: rgba(99, 102, 241, 0.08);
+  --inline-code-color: #be185d;
 }
 
 body.theme-ocean-dark {
   --accent: #7dd3fc;
   --accent-hover: #38bdf8;
   --accent-muted: rgba(56, 189, 248, 0.14);
+  --accent-light: rgba(56, 189, 248, 0.18);
   --bg-deep: #0f172a;
   --bg-secondary: #111827;
   --glass-bg: rgba(15, 23, 42, 0.78);
@@ -61,12 +76,14 @@ body.theme-ocean-dark {
   --code-bg: rgba(15, 23, 42, 0.9);
   --border-color: rgba(148, 163, 184, 0.08);
   --hover-bg: rgba(56, 189, 248, 0.08);
+  --inline-code-color: #7dd3fc;
 }
 
 body.theme-tokyo-night {
   --accent: #7aa2f7;
   --accent-hover: #82cfff;
   --accent-muted: rgba(122, 162, 247, 0.12);
+  --accent-light: rgba(122, 162, 247, 0.18);
   --bg-deep: #151a2f;
   --bg-secondary: #1f2a44;
   --glass-bg: rgba(22, 28, 51, 0.85);
@@ -80,12 +97,14 @@ body.theme-tokyo-night {
   --code-bg: rgba(26, 32, 57, 0.95);
   --border-color: rgba(122, 162, 247, 0.12);
   --hover-bg: rgba(122, 162, 247, 0.08);
+  --inline-code-color: #7aa2f7;
 }
 
 body.theme-obsidian-blue {
   --accent: #38bdf8;
   --accent-hover: #60a5fa;
   --accent-muted: rgba(56, 189, 248, 0.14);
+  --accent-light: rgba(56, 189, 248, 0.18);
   --bg-deep: #050816;
   --bg-secondary: #0f172a;
   --glass-bg: rgba(15, 23, 42, 0.75);
@@ -99,12 +118,14 @@ body.theme-obsidian-blue {
   --code-bg: rgba(15, 23, 42, 0.92);
   --border-color: rgba(148, 163, 184, 0.08);
   --hover-bg: rgba(56, 189, 248, 0.08);
+  --inline-code-color: #38bdf8;
 }
 
 body.theme-amoled {
   --accent: #818cf8;
   --accent-hover: #a5b4fc;
   --accent-muted: rgba(129, 140, 248, 0.14);
+  --accent-light: rgba(129, 140, 248, 0.2);
   --bg-deep: #000000;
   --bg-secondary: #0a0a0a;
   --glass-bg: rgba(10, 10, 10, 0.92);
@@ -121,6 +142,7 @@ body.theme-amoled {
   --font-ui: "Inter", "Segoe UI", sans-serif;
   --font-display: "Playfair Display", Georgia, serif;
   --font-mono: "Fira Code", "JetBrains Mono", monospace;
+  --inline-code-color: #a5b4fc;
 }
 
 * {
@@ -267,7 +289,6 @@ body.theme-amoled .code-block-header {
     box-shadow 180ms ease;
 }
 
-body.theme-amoled .sidebar,
 body.theme-amoled .header,
 body.theme-amoled .prose-container,
 body.theme-amoled .toc,
@@ -680,12 +701,13 @@ body.theme-amoled .toast {
 
 .markdown-body code:not(pre code) {
   background: var(--code-bg);
-  color: #be185d;
+  color: var(--inline-code-color);
   padding: 4px 8px;
   border-radius: 6px;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.92em;
-  border: 1px solid rgba(190, 24, 93, 0.18);
+  border: 1px solid
+    color-mix(in srgb, var(--inline-code-color) 25%, transparent);
   word-break: break-word;
 }
 
@@ -1291,7 +1313,8 @@ pre code {
   .main-content {
     padding: 8px 8px 0;
     overflow: hidden; /* let .markdown-body scroll instead */
-    height: 100vh; /* occupy full viewport height */
+    height: 100vh; /* fallback for browsers without dvh support */
+    height: 100dvh; /* avoids iOS Safari chrome-collapse overflow */
     display: flex;
     flex-direction: column;
     min-height: auto; /* override any min-height */

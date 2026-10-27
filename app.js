@@ -70,6 +70,19 @@ const themeManager = new ThemeManager();
 // MARKDOWN PARSING (parser.js)
 // ============================================================================
 
+/**
+ * Escape HTML special characters to prevent XSS when inserting untrusted text
+ * into innerHTML contexts. Used by the markdown renderer and DOM helpers.
+ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 class MarkdownParser {
   constructor() {
     this.setupMarked();
@@ -118,7 +131,7 @@ class MarkdownParser {
           return `<div class="callout" data-type="${type}">
             <div class="callout-title">
               <i data-lucide="${iconName}"></i>
-              <span>${titleText}</span>
+              <span>${escHtml(titleText)}</span>
             </div>
             ${contentHtml ? `<div class="callout-content">${contentHtml}</div>` : ""}
           </div>`;
@@ -145,15 +158,20 @@ class MarkdownParser {
         }
       },
 
-      image: (token) => {
-        let src = token.href;
+      image: (tokenOrHref, title, text) => {
+        // marked v4 calls image(href, title, text); v5+ passes a token object
+        const isToken = typeof tokenOrHref === "object" && tokenOrHref !== null;
+        let src = isToken ? tokenOrHref.href : tokenOrHref;
+        const altText = isToken ? tokenOrHref.text : text || "";
+        const titleText = isToken ? tokenOrHref.title || "" : title || "";
 
         // Handle Obsidian image embeds converted to note:// by preprocess
-        if (src.startsWith("note://")) {
+        if (src && src.startsWith("note://")) {
           src = src.substring(7); // Remove "note://"
         }
 
         if (
+          src &&
           !src.startsWith("http") &&
           !src.startsWith("https") &&
           !src.startsWith("/") &&
@@ -184,7 +202,7 @@ class MarkdownParser {
             );
           src = baseUrl + src;
         }
-        return `<img src="${src}" alt="${token.text}" title="${token.title || ""}" />`;
+        return `<img src="${src}" alt="${escHtml(altText)}" title="${escHtml(titleText)}" />`;
       },
     };
 
@@ -290,6 +308,7 @@ const DOM = {
   sidebarNav: document.getElementById("sidebar-nav"),
   tocNav: document.getElementById("toc-nav"),
   tocSidebar: document.getElementById("toc-sidebar"),
+  sidebarOverlay: document.getElementById("sidebar-overlay"),
   modalOverlay: document.getElementById("modal-overlay"),
   toastContainer: document.getElementById("toast-container"),
   search: document.getElementById("sidebar-search"),
@@ -303,8 +322,8 @@ const DOM = {
 const state = {
   manifest: null,
   currentNote: null,
-  validPaths: new Set(),   // Lesson 1: allowlist of valid paths
-  noteIndex: new Map(),    // Lesson 3: name → path index for wikilinks
+  validPaths: new Set(), // Lesson 1: allowlist of valid paths
+  noteIndex: new Map(), // Lesson 3: name → path index for wikilinks
   isMobile: window.innerWidth <= 768,
   sidebarOpen: window.innerWidth > 768,
   tocOpen: false,
@@ -329,13 +348,23 @@ function showError(message) {
 
 function updateBreadcrumb(path) {
   const parts = path.split("/").filter((p) => p);
-  const breadcrumbs = parts
-    .map((part, i) => {
-      const subpath = parts.slice(0, i + 1).join("/");
-      return `<span data-path="${subpath}">${part}</span>`;
-    })
-    .join(" / ");
-  DOM.breadcrumb.innerHTML = breadcrumbs || "Vault";
+  DOM.breadcrumb.innerHTML = "";
+
+  if (parts.length === 0) {
+    DOM.breadcrumb.textContent = "Vault";
+    return;
+  }
+
+  parts.forEach((part, i) => {
+    if (i > 0) {
+      const sep = document.createTextNode(" / ");
+      DOM.breadcrumb.appendChild(sep);
+    }
+    const span = document.createElement("span");
+    span.dataset.path = parts.slice(0, i + 1).join("/");
+    span.textContent = part; // textContent — no XSS risk
+    DOM.breadcrumb.appendChild(span);
+  });
 }
 
 function showToast(message, duration = 2000) {
@@ -952,9 +981,17 @@ function setupKeyboardShortcuts() {
 }
 
 function setupButtonHandlers() {
-  DOM.btnTheme.addEventListener("click", () => {
+  DOM.btnTheme.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent click bubbling to overlay / outside listeners
     themeManager.nextTheme();
   });
+
+  // Tap the dim overlay → close sidebar on tablet/mobile
+  if (DOM.sidebarOverlay) {
+    DOM.sidebarOverlay.addEventListener("click", () => {
+      ui.closeSidebars();
+    });
+  }
 
   DOM.btnSidebarToggle.addEventListener("click", () => {
     ui.toggleSidebar();
