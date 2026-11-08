@@ -50,6 +50,11 @@ class ThemeManager {
 
     this.currentTheme = safeTheme;
     localStorage.setItem(THEME_STORAGE_KEY, safeTheme);
+
+    // Re-render Mermaid diagrams when switching theme (light vs dark)
+    if (window.effects && window.effects.reRenderMermaid) {
+      window.effects.reRenderMermaid();
+    }
   }
 
   nextTheme() {
@@ -144,17 +149,30 @@ class MarkdownParser {
       code: (tokenOrCode, language) => {
         const isToken = typeof tokenOrCode === "object";
         const code = isToken ? tokenOrCode.text : tokenOrCode;
-        const lang = (isToken ? tokenOrCode.lang : language) || "text";
-        const safeLang =
-          String(lang)
-            .toLowerCase()
-            .replace(/[^a-z0-9+_-]/g, "") || "text";
+        const lang = (isToken ? tokenOrCode.lang : language) || "";
+        const safeLang = String(lang)
+          .toLowerCase()
+          .replace(/[^a-z0-9+_-]/g, "");
 
+        const trimmedCode = code ? String(code).trim() : "";
+        const isMermaid =
+          safeLang === "mermaid" ||
+          (!safeLang &&
+            /^\s*(flowchart|sequenceDiagram|graph|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|gitGraph)\b/m.test(
+              trimmedCode,
+            ));
+
+        if (isMermaid) {
+          const encoded = encodeURIComponent(trimmedCode);
+          return `<div class="mermaid-wrapper" data-mermaid-src="${encoded}"><pre class="mermaid">${escHtml(trimmedCode)}</pre></div>`;
+        }
+
+        const effectiveLang = safeLang || "text";
         try {
-          const highlighted = this.highlightCode(code, safeLang);
-          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${safeLang}</span></div><pre class="language-${safeLang}"><code class="language-${safeLang}">${highlighted}</code></pre></div>`;
+          const highlighted = this.highlightCode(code, effectiveLang);
+          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${effectiveLang}</span></div><pre class="language-${effectiveLang}"><code class="language-${effectiveLang}">${highlighted}</code></pre></div>`;
         } catch (e) {
-          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${safeLang}</span></div><pre class="language-${safeLang}"><code class="language-${safeLang}">${code}</code></pre></div>`;
+          return `<div class="code-block"><div class="code-block-header"><span class="code-block-dots"><span></span><span></span><span></span></span><span class="code-block-language">${effectiveLang}</span></div><pre class="language-${effectiveLang}"><code class="language-${effectiveLang}">${escHtml(code)}</code></pre></div>`;
         }
       },
 
@@ -203,6 +221,12 @@ class MarkdownParser {
           src = baseUrl + src;
         }
         return `<img src="${src}" alt="${escHtml(altText)}" title="${escHtml(titleText)}" />`;
+      },
+
+      checkbox: (token) => {
+        const isChecked =
+          typeof token === "object" ? !!token?.checked : !!token;
+        return `<input type="checkbox" class="task-checkbox"${isChecked ? ' checked=""' : ""} /> `;
       },
     };
 
@@ -857,6 +881,9 @@ DOM.noteBody.addEventListener(
 
 function enhanceCodeBlocks() {
   DOM.noteBody.querySelectorAll("pre").forEach((pre, index) => {
+    if (pre.classList.contains("mermaid") || pre.closest(".mermaid-wrapper")) {
+      return;
+    }
     const code = pre.textContent;
     const button = document.createElement("button");
     button.className = "code-copy-btn";
@@ -963,6 +990,390 @@ function enhanceAnchors() {
   });
 }
 
+function enhanceTaskLists() {
+  const noteBody = DOM.noteBody;
+  if (!noteBody) return;
+
+  const boxOf = (li) => li.querySelector('input[type="checkbox"]');
+
+  // "A) text" -> "A"
+  const optionLetter = (li) => {
+    const m = li.textContent
+      .trim()
+      .replace(/^[\s\u200B]*/, "")
+      .match(/^([A-D])\)/i);
+    return m ? m[1].toUpperCase() : null;
+  };
+
+  // ---- 1. Answer keys ------------------------------------------------------
+  const ANSWER_RE =
+    /^\s*(\d+)[.)]\s*(?:(?:\*{1,2})?Answer:\s*)?(?:\*{1,2})?([A-D])(?:\*{1,2})?\b/i;
+  const LI_ANSWER_RE = /^(?:\*{1,2})?(?:Answer:\s*)?([A-D])\b/i;
+
+  function parseAnswerKey(details) {
+    const found = {};
+
+    // (a) literal lines: "1. B" / "2) **Answer: C**"
+    for (const line of (details.textContent || "").split("\n")) {
+      const m = line.match(ANSWER_RE);
+      if (m) found[parseInt(m[1], 10)] = m[2].toUpperCase();
+    }
+
+    // (b) <ol> items: number = position. Top-level lists only, so a numbered
+    //     list inside an explanation can't be mistaken for answers.
+    Array.from(details.querySelectorAll("ol"))
+      .filter((ol) => {
+        const outer = ol.parentElement.closest("ol");
+        return !(outer && details.contains(outer));
+      })
+      .forEach((ol) => {
+        Array.from(ol.children).forEach((li, i) => {
+          const m = li.textContent.trim().match(LI_ANSWER_RE);
+          const n = (ol.start || 1) + i;
+          if (m && found[n] == null) found[n] = m[1].toUpperCase();
+        });
+      });
+
+    return found;
+  }
+
+  const allDetails = Array.from(noteBody.querySelectorAll("details"));
+  const keyCache = new Map(); // <details> -> { 1: "B", 2: "C", ... }
+  const keyOf = (d) => {
+    if (!keyCache.has(d)) keyCache.set(d, parseAnswerKey(d));
+    return keyCache.get(d);
+  };
+
+  // A quiz list's answer key = the first <details> that comes AFTER it.
+  const keyElementFor = (ul) =>
+    allDetails.find(
+      (d) =>
+        !d.contains(ul) &&
+        (ul.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+    ) || null;
+
+  // ---- 2. Helpers ----------------------------------------------------------
+  function findQuestionNumber(ul) {
+    for (
+      let prev = ul.previousElementSibling;
+      prev;
+      prev = prev.previousElementSibling
+    ) {
+      const m = prev.textContent
+        .trim()
+        .match(/\bQ(\d+)\b|\bQuestion\s*(\d+)\b/i);
+      if (m) return parseInt(m[1] || m[2], 10);
+      if (prev.tagName === "UL" || prev.tagName === "H2") break;
+    }
+    return null;
+  }
+
+  function addBadge(li, cls, text) {
+    const badge = document.createElement("span");
+    badge.className = `quiz-feedback-badge ${cls}`;
+    badge.textContent = text;
+    li.appendChild(badge);
+  }
+
+  function setupTodo(items) {
+    items.forEach((li) => {
+      const box = boxOf(li);
+      li.classList.toggle("is-checked", box.checked);
+      box.addEventListener("change", () =>
+        li.classList.toggle("is-checked", box.checked),
+      );
+      li.addEventListener("click", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "A") return;
+        box.checked = !box.checked;
+        li.classList.toggle("is-checked", box.checked);
+      });
+    });
+  }
+
+  const seenPerKey = new Map(); // answer-key element -> quiz lists seen so far
+
+  function setupQuiz(ul, items) {
+    ul.classList.add("quiz-options-list");
+
+    const keyEl = keyElementFor(ul);
+    const seen = (seenPerKey.get(keyEl) || 0) + 1;
+    seenPerKey.set(keyEl, seen);
+
+    // "Q3" label in the text wins; otherwise count within this answer key
+    const qNum = findQuestionNumber(ul) ?? seen;
+    const correct = keyEl ? keyOf(keyEl)[qNum] || null : null;
+    // console.debug("[quiz]", { qNum, correct, key: keyEl && keyOf(keyEl) }); // uncomment to debug
+
+    const select = (chosen) => {
+      // radio behaviour: reset every option and any previous badge
+      items.forEach((li) => {
+        boxOf(li).checked = false;
+        li.classList.remove(
+          "is-checked",
+          "quiz-correct",
+          "quiz-wrong",
+          "quiz-reveal-correct",
+        );
+        li.querySelector(".quiz-feedback-badge")?.remove();
+      });
+
+      boxOf(chosen).checked = true;
+      chosen.classList.add("is-checked");
+
+      const picked = optionLetter(chosen);
+      if (!correct || !picked) return;
+
+      if (picked === correct) {
+        chosen.classList.add("quiz-correct");
+        addBadge(chosen, "badge-correct", "✓ Correct!");
+      } else {
+        chosen.classList.add("quiz-wrong");
+        addBadge(chosen, "badge-wrong", "✗ Incorrect");
+        const right = items.find((li) => optionLetter(li) === correct);
+        if (right) {
+          right.classList.add("quiz-reveal-correct");
+          addBadge(right, "badge-reveal", "✓ Correct Answer");
+        }
+      }
+    };
+
+    items.forEach((li) => {
+      boxOf(li).addEventListener("click", (e) => {
+        e.stopPropagation();
+        select(li);
+      });
+      li.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") return;
+        e.preventDefault();
+        select(li);
+      });
+    });
+  }
+
+  // ---- 3. Walk every list that contains checkboxes -------------------------
+  noteBody.querySelectorAll("ul").forEach((ul) => {
+    const items = Array.from(ul.querySelectorAll(":scope > li")).filter(boxOf);
+    if (items.length === 0) return;
+
+    ul.classList.add("contains-task-list");
+    items.forEach((li) => {
+      li.classList.add("task-list-item");
+      boxOf(li).removeAttribute("disabled");
+      boxOf(li).disabled = false;
+    });
+
+    if (items.some(optionLetter)) setupQuiz(ul, items);
+    else setupTodo(items);
+  });
+}
+
+// ============================================================================
+// MERMAID: fit-to-box rendering with automatic orientation
+//
+// Replaces BOTH enhanceMermaid() and reRenderMermaid() in app.js.
+// Everything else (the `code` renderer that emits .mermaid-wrapper, the
+// window.effects exports) stays as it is.
+//
+// How it works:
+//   1. Render the diagram off-screen with mermaid.render() (no flashing).
+//   2. For flowcharts, ALSO render the other orientation (LR <-> TB).
+//   3. Keep whichever one displays larger inside the box.
+//   4. Scale it to fit. Only scroll sideways if it would be unreadably small.
+// ============================================================================
+
+const MERMAID_FIT = {
+  goodScale: 0.95, // already fits at >=95% -> don't bother trying the other way
+  flipGain: 1.15, // flip orientation only if it renders >=15% larger
+  minScale: 0.55, // never shrink below 55%; scroll sideways instead
+  maxHeightVh: 0.7, // a diagram shouldn't need more than 70% of the screen
+};
+
+// Colours belong HERE (Mermaid's own theming), not in CSS overrides.
+const MERMAID_DARK_VARS = {
+  darkMode: true,
+  background: "#000000",
+  primaryColor: "#0d0d0d",
+  primaryBorderColor: "#818cf8",
+  primaryTextColor: "#f5f5f4",
+  secondaryColor: "#0a0a0a",
+  tertiaryColor: "#0a0a0a",
+  lineColor: "#64748b",
+  textColor: "#cbd5e1",
+  edgeLabelBackground: "#000000",
+  clusterBkg: "#0a0a0a",
+  clusterBorder: "#374151",
+  noteBkgColor: "#0d0d0d",
+  noteTextColor: "#f5f5f4",
+  noteBorderColor: "#818cf8",
+};
+
+const MERMAID_DIR_RE = /^(\s*(?:flowchart|graph)\s+)(TB|TD|BT|LR|RL)\b/m;
+const MERMAID_VIEWBOX_RE =
+  /viewBox="\s*-?[\d.]+[\s,]+-?[\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)\s*"/;
+
+let _mermaidSeq = 0;
+
+function isDarkTheme() {
+  // Works with or without ThemeManager (so it survives the AMOLED-only cleanup)
+  return !(
+    typeof themeManager !== "undefined" &&
+    themeManager.getTheme &&
+    themeManager.getTheme() === "theme-white"
+  );
+}
+
+function initMermaid() {
+  const dark = isDarkTheme();
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "strict",
+    theme: dark ? "base" : "default",
+    ...(dark ? { themeVariables: MERMAID_DARK_VARS } : {}),
+    fontFamily: "Inter, -apple-system, 'Segoe UI', Roboto, sans-serif",
+    flowchart: {
+      useMaxWidth: true, // responsive SVG, not a fixed pixel width
+      htmlLabels: true,
+      nodeSpacing: 40,
+      rankSpacing: 45,
+      padding: 12,
+    },
+  });
+}
+
+// ---- small pure helpers ----------------------------------------------------
+
+const mermaidDirection = (code) => code.match(MERMAID_DIR_RE)?.[2] ?? null;
+
+const withMermaidDirection = (code, dir) =>
+  code.replace(MERMAID_DIR_RE, `$1${dir}`);
+
+// Largest scale (max 1) at which a w x h diagram fits an availW x maxH box.
+const mermaidFitScale = ({ w, h }, availW, maxH) =>
+  !w || !h ? 1 : Math.min(1, availW / w, maxH / h);
+
+function mermaidContentWidth(el) {
+  // NB: not called innerWidth - that would shadow window.innerWidth globally.
+  const cs = getComputedStyle(el);
+  return (
+    el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+  );
+}
+
+// ---- rendering -------------------------------------------------------------
+
+async function renderMermaidSvg(code) {
+  const id = `mmd-${++_mermaidSeq}`;
+  try {
+    const { svg } = await mermaid.render(id, code);
+    const m = svg.match(MERMAID_VIEWBOX_RE);
+    return { svg, w: m ? parseFloat(m[1]) : 0, h: m ? parseFloat(m[2]) : 0 };
+  } catch (err) {
+    document.getElementById(`d${id}`)?.remove(); // Mermaid leaves its error graphic in <body>
+    throw err;
+  }
+}
+
+async function renderBestMermaid(code, availW, maxH) {
+  const first = await renderMermaidSvg(code);
+  first.scale = mermaidFitScale(first, availW, maxH);
+
+  const dir = mermaidDirection(code);
+  if (!dir || first.scale >= MERMAID_FIT.goodScale) return first;
+
+  const alt = dir === "LR" || dir === "RL" ? "TB" : "LR";
+  try {
+    const second = await renderMermaidSvg(withMermaidDirection(code, alt));
+    second.scale = mermaidFitScale(second, availW, maxH);
+    if (second.scale > first.scale * MERMAID_FIT.flipGain) return second;
+  } catch {
+    /* the alternate layout failed - keep the author's orientation */
+  }
+  return first;
+}
+
+function applyMermaidFit(svg, { w, scale }) {
+  if (!svg || !w) return;
+  svg.removeAttribute("height");
+  svg.style.height = "auto";
+  if (scale >= MERMAID_FIT.minScale) {
+    svg.style.width = `${Math.round(w * scale)}px`;
+    svg.style.maxWidth = "100%"; // keeps shrinking on narrow screens
+  } else {
+    svg.style.width = `${Math.round(w * MERMAID_FIT.minScale)}px`;
+    svg.style.maxWidth = "none"; // too big even at min scale -> wrapper scrolls
+  }
+}
+
+function showMermaidError(wrap, err, code) {
+  wrap.textContent = "";
+  const box = document.createElement("div");
+  box.className = "mermaid-render-error";
+
+  const title = document.createElement("strong");
+  title.textContent = "⚠ Diagram couldn't render";
+  const msg = document.createElement("div");
+  msg.textContent = err?.message || String(err);
+  const src = document.createElement("pre");
+  src.textContent = code;
+
+  box.append(title, msg, src);
+  wrap.appendChild(box);
+}
+
+async function waitForFonts() {
+  // Mermaid measures text BEFORE drawing boxes. If Inter hasn't loaded yet it
+  // measures a fallback font, and the real font then overflows the boxes.
+  try {
+    await document.fonts.load("500 14px Inter");
+    await document.fonts.ready;
+  } catch {
+    /* old browser: render anyway */
+  }
+}
+
+// ---- public API (same names app.js already exports) ------------------------
+
+async function enhanceMermaid() {
+  const noteBody = DOM.noteBody;
+  if (!noteBody || typeof mermaid === "undefined") return;
+
+  const wrappers = noteBody.querySelectorAll(
+    ".mermaid-wrapper:not([data-rendered])",
+  );
+  if (!wrappers.length) return;
+
+  initMermaid();
+  await waitForFonts();
+
+  for (const wrap of wrappers) {
+    wrap.dataset.rendered = "pending"; // stops a second concurrent run
+    const code = decodeURIComponent(wrap.dataset.mermaidSrc || "");
+    if (!code) continue;
+
+    try {
+      const availW = mermaidContentWidth(wrap) || 700;
+      const maxH = window.innerHeight * MERMAID_FIT.maxHeightVh;
+      const best = await renderBestMermaid(code, availW, maxH);
+
+      wrap.innerHTML = best.svg;
+      applyMermaidFit(wrap.querySelector("svg"), best);
+      wrap.dataset.rendered = "true";
+    } catch (err) {
+      console.error("Mermaid diagram rendering error:", err);
+      wrap.dataset.rendered = "error";
+      showMermaidError(wrap, err, code);
+    }
+  }
+}
+
+async function reRenderMermaid() {
+  // e.g. after a theme switch: forget what was rendered and draw again
+  DOM.noteBody
+    ?.querySelectorAll(".mermaid-wrapper")
+    .forEach((w) => delete w.dataset.rendered);
+  await enhanceMermaid();
+}
+
 // Lesson 5: dead code removed — debounce, throttle, fadeOutContent, fadeInContent were unused
 
 function setupKeyboardShortcuts() {
@@ -1067,6 +1478,9 @@ window.effects = {
   enhanceInternalLinks,
   enhanceTables,
   enhanceAnchors,
+  enhanceTaskLists,
+  enhanceMermaid,
+  reRenderMermaid,
   getAllNotes,
   navigatePrevious,
   navigateNext,
@@ -1229,6 +1643,8 @@ async function loadNote(path, { push = true } = {}) {
     effects.enhanceInternalLinks();
     effects.enhanceTables();
     effects.enhanceAnchors();
+    effects.enhanceTaskLists();
+    effects.enhanceMermaid();
 
     // Append inline Previous / Next navigation block
     const allNotes = getAllNotes();
