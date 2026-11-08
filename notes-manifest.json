@@ -225,6 +225,73 @@
   },
   {
     "type": "folder",
+    "name": "Python",
+    "path": "Python",
+    "children": [
+      {
+        "type": "file",
+        "name": "01. Introduction.md",
+        "title": "Introduction to Python",
+        "path": "Python/01. Introduction.md"
+      },
+      {
+        "type": "file",
+        "name": "02. Variables, Types, Casting & Operators.md",
+        "title": "Variables, Types, Casting & Operators in Python",
+        "path": "Python/02. Variables, Types, Casting & Operators.md"
+      },
+      {
+        "type": "file",
+        "name": "03. Strings & Methods.md",
+        "title": "Strings & Methods in Python",
+        "path": "Python/03. Strings & Methods.md"
+      },
+      {
+        "type": "file",
+        "name": "04. Control Flow & Loops.md",
+        "title": "Control Flow & Loops in Python",
+        "path": "Python/04. Control Flow & Loops.md"
+      },
+      {
+        "type": "file",
+        "name": "05. Functions, Lambda & Scope.md",
+        "title": "Functions, Lambda & Scope in Python",
+        "path": "Python/05. Functions, Lambda & Scope.md"
+      },
+      {
+        "type": "file",
+        "name": "06. Lists.md",
+        "title": "Lists in Python",
+        "path": "Python/06. Lists.md"
+      },
+      {
+        "type": "file",
+        "name": "07. Tuples & Sequences.md",
+        "title": "Tuples & Sequences in Python",
+        "path": "Python/07. Tuples & Sequences.md"
+      },
+      {
+        "type": "file",
+        "name": "08. Sets & Dictionaries.md",
+        "title": "Sets & Dictionaries in Python",
+        "path": "Python/08. Sets & Dictionaries.md"
+      },
+      {
+        "type": "file",
+        "name": "09. Modules, Files & Exceptions.md",
+        "title": "Modules, Files & Exceptions in Python",
+        "path": "Python/09. Modules, Files & Exceptions.md"
+      },
+      {
+        "type": "file",
+        "name": "10. Classes, OOP & Generators.md",
+        "title": "Classes, OOP & Generators in Python",
+        "path": "Python/10. Classes, OOP & Generators.md"
+      }
+    ]
+  },
+  {
+    "type": "folder",
     "name": "SQL",
     "path": "SQL",
     "children": [
@@ -236,19 +303,19 @@
           {
             "type": "file",
             "name": "01. Introduction to SQL.md",
-            "title": "01. Introduction to SQL",
+            "title": "Introduction to SQL",
             "path": "SQL/01. Beginner Level/01. Introduction to SQL.md"
           },
           {
             "type": "file",
             "name": "02. Setup Your Environment.md",
-            "title": "02. Setup Your Environment",
+            "title": "Setting Up Your SQL Environment",
             "path": "SQL/01. Beginner Level/02. Setup Your Environment.md"
           },
           {
             "type": "file",
             "name": "03. Retrieving Data with SELECT.md",
-            "title": "03. Retrieving Data with SELECT",
+            "title": "Retrieving Data with SELECT",
             "path": "SQL/01. Beginner Level/03. Retrieving Data with SELECT.md"
           }
         ]
