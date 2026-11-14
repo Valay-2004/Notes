@@ -456,6 +456,12 @@
             "path": "SQL/06. Advanced SQL & Production Mastery/03. Views, Indexes, Transactions & Stored Procedures.md"
           }
         ]
+      },
+      {
+        "type": "file",
+        "name": "00_sql_curriculum_vault_manifest.md",
+        "title": "SQL Complete Course Architecture & Vault Manifest (`Valay-2004/Notes`)",
+        "path": "SQL/00_sql_curriculum_vault_manifest.md"
       }
     ]
   }
