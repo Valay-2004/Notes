@@ -1,26 +1,6 @@
 [
   {
     "type": "folder",
-    "name": ".gemini",
-    "path": ".gemini",
-    "children": [
-      {
-        "type": "folder",
-        "name": "rules",
-        "path": ".gemini/rules",
-        "children": [
-          {
-            "type": "file",
-            "name": "notes-style.md",
-            "title": "Notes Style Rules",
-            "path": ".gemini/rules/notes-style.md"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "folder",
     "name": "JAVA",
     "path": "JAVA",
     "children": [
