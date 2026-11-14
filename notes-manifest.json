@@ -1,6 +1,26 @@
 [
   {
     "type": "folder",
+    "name": ".gemini",
+    "path": ".gemini",
+    "children": [
+      {
+        "type": "folder",
+        "name": "rules",
+        "path": ".gemini/rules",
+        "children": [
+          {
+            "type": "file",
+            "name": "notes-style.md",
+            "title": "Notes Style Rules",
+            "path": ".gemini/rules/notes-style.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "folder",
     "name": "JAVA",
     "path": "JAVA",
     "children": [
@@ -314,21 +334,146 @@
         "children": [
           {
             "type": "file",
-            "name": "01. Introduction to SQL.md",
-            "title": "01. Introduction to SQL",
-            "path": "SQL/01. Beginner Level/01. Introduction to SQL.md"
+            "name": "01. Overview of ANSI SQL.md",
+            "title": "Overview of ANSI SQL in SQL",
+            "path": "SQL/01. Beginner Level/01. Overview of ANSI SQL.md"
           },
           {
             "type": "file",
-            "name": "02. Setup Your Environment.md",
-            "title": "02. Setup Your Environment",
-            "path": "SQL/01. Beginner Level/02. Setup Your Environment.md"
+            "name": "02. Introduction to Database Design.md",
+            "title": "Introduction to Database Design in SQL",
+            "path": "SQL/01. Beginner Level/02. Introduction to Database Design.md"
           },
           {
             "type": "file",
-            "name": "03. Retrieving Data with SELECT.md",
-            "title": "03. Retrieving Data with SELECT",
-            "path": "SQL/01. Beginner Level/03. Retrieving Data with SELECT.md"
+            "name": "03. Data Modelling Process.md",
+            "title": "Data Modelling Process in SQL",
+            "path": "SQL/01. Beginner Level/03. Data Modelling Process.md"
+          },
+          {
+            "type": "file",
+            "name": "04. Database Normalization (1NF, 2NF, 3NF).md",
+            "title": "Database Normalization (1NF, 2NF, 3NF) in SQL",
+            "path": "SQL/01. Beginner Level/04. Database Normalization (1NF, 2NF, 3NF).md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "02. Data Types & Constraints",
+        "path": "SQL/02. Data Types & Constraints",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. SQL Data Types (ANSI, MySQL & T-SQL).md",
+            "title": "SQL Data Types (ANSI, MySQL & T-SQL) in SQL",
+            "path": "SQL/02. Data Types & Constraints/01. SQL Data Types (ANSI, MySQL & T-SQL).md"
+          },
+          {
+            "type": "file",
+            "name": "02. SQL Constraints (PK, FK, Unique, Check, Not Null).md",
+            "title": "SQL Constraints (PK, FK, Unique, Check, Not Null) in SQL",
+            "path": "SQL/02. Data Types & Constraints/02. SQL Constraints (PK, FK, Unique, Check, Not Null).md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "03. Querying, Sorting & Filtering",
+        "path": "SQL/03. Querying, Sorting & Filtering",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Querying Data with SELECT.md",
+            "title": "Querying Data with SELECT in SQL",
+            "path": "SQL/03. Querying, Sorting & Filtering/01. Querying Data with SELECT.md"
+          },
+          {
+            "type": "file",
+            "name": "02. Sorting Data with ORDER BY.md",
+            "title": "Sorting Data with ORDER BY in SQL",
+            "path": "SQL/03. Querying, Sorting & Filtering/02. Sorting Data with ORDER BY.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Filtering Data (WHERE, IN, BETWEEN, LIKE, Aliases).md",
+            "title": "Filtering Data (WHERE, IN, BETWEEN, LIKE, Aliases) in SQL",
+            "path": "SQL/03. Querying, Sorting & Filtering/03. Filtering Data (WHERE, IN, BETWEEN, LIKE, Aliases).md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "04. Joins, Grouping & Subqueries",
+        "path": "SQL/04. Joins, Grouping & Subqueries",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Joining Tables (INNER, LEFT, RIGHT, FULL, CROSS, SELF).md",
+            "title": "Joining Tables (INNER, LEFT, RIGHT, FULL, CROSS, SELF) in SQL",
+            "path": "SQL/04. Joins, Grouping & Subqueries/01. Joining Tables (INNER, LEFT, RIGHT, FULL, CROSS, SELF).md"
+          },
+          {
+            "type": "file",
+            "name": "02. Grouping Data (GROUP BY, HAVING, ROLLUP, CUBE, GROUPING SETS).md",
+            "title": "Grouping Data (GROUP BY, HAVING, ROLLUP, CUBE, GROUPING SETS) in SQL",
+            "path": "SQL/04. Joins, Grouping & Subqueries/02. Grouping Data (GROUP BY, HAVING, ROLLUP, CUBE, GROUPING SETS).md"
+          },
+          {
+            "type": "file",
+            "name": "03. Subqueries (IN, ANY, ALL, EXISTS, Derived Tables).md",
+            "title": "Subqueries (IN, ANY, ALL, EXISTS, Derived Tables) in SQL",
+            "path": "SQL/04. Joins, Grouping & Subqueries/03. Subqueries (IN, ANY, ALL, EXISTS, Derived Tables).md"
+          },
+          {
+            "type": "file",
+            "name": "04. Set Operators (UNION, UNION ALL, INTERSECT, EXCEPT).md",
+            "title": "Set Operators (UNION, UNION ALL, INTERSECT, EXCEPT) in SQL",
+            "path": "SQL/04. Joins, Grouping & Subqueries/04. Set Operators (UNION, UNION ALL, INTERSECT, EXCEPT).md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "05. Modifying Data & Conditional Expressions",
+        "path": "SQL/05. Modifying Data & Conditional Expressions",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Modifying Data (INSERT, UPDATE JOIN, DELETE, MERGE).md",
+            "title": "Modifying Data (INSERT, UPDATE JOIN, DELETE, MERGE) in SQL",
+            "path": "SQL/05. Modifying Data & Conditional Expressions/01. Modifying Data (INSERT, UPDATE JOIN, DELETE, MERGE).md"
+          },
+          {
+            "type": "file",
+            "name": "02. Conditional Expressions (CASE, COALESCE, NULLIF).md",
+            "title": "Conditional Expressions (CASE, COALESCE, NULLIF) in SQL",
+            "path": "SQL/05. Modifying Data & Conditional Expressions/02. Conditional Expressions (CASE, COALESCE, NULLIF).md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "06. Advanced SQL & Production Mastery",
+        "path": "SQL/06. Advanced SQL & Production Mastery",
+        "children": [
+          {
+            "type": "file",
+            "name": "01. Common Table Expressions (CTEs & Recursive Queries).md",
+            "title": "Common Table Expressions (CTEs & Recursive Queries) in SQL",
+            "path": "SQL/06. Advanced SQL & Production Mastery/01. Common Table Expressions (CTEs & Recursive Queries).md"
+          },
+          {
+            "type": "file",
+            "name": "02. Window Functions (ROW_NUMBER, RANK, LEAD, LAG).md",
+            "title": "Window Functions (ROW_NUMBER, RANK, LEAD, LAG) in SQL",
+            "path": "SQL/06. Advanced SQL & Production Mastery/02. Window Functions (ROW_NUMBER, RANK, LEAD, LAG).md"
+          },
+          {
+            "type": "file",
+            "name": "03. Views, Indexes, Transactions & Stored Procedures.md",
+            "title": "Views, Indexes, Transactions & Stored Procedures in SQL",
+            "path": "SQL/06. Advanced SQL & Production Mastery/03. Views, Indexes, Transactions & Stored Procedures.md"
           }
         ]
       }
