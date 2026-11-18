@@ -7,7 +7,7 @@ const ROOT_DIR = path.join(__dirname, "..");
 const OUTPUT_FILE = path.join(__dirname, "../notes-manifest.json");
 
 // Folders/files to exclude from crawl
-const EXCLUDE = [".git", "scripts", "node_modules", "favicon", ".agent"];
+const EXCLUDE = [".git", "scripts", "node_modules", "favicon", ".gemini"];
 const SKIP_FILES = ["README.md", "ANALYSIS.md", "update.md"];
 
 function extractTitle(filePath) {
