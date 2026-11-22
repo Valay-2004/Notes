@@ -327,6 +327,12 @@
             "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security/12. Web Security, CTF Gotchas, Testing & Deployment.md"
           }
         ]
+      },
+      {
+        "type": "file",
+        "name": "00. PHP Curriculum & Vault Manifest.md",
+        "title": "Modern PHP 8.4/8.5+ Master Curriculum (The Right Way Edition)",
+        "path": "PHP/00. PHP Curriculum & Vault Manifest.md"
       }
     ]
   },
@@ -563,6 +569,12 @@
             "path": "SQL/06. Advanced SQL & Production Mastery/03. Views, Indexes, Transactions & Stored Procedures.md"
           }
         ]
+      },
+      {
+        "type": "file",
+        "name": "00_sql_curriculum_vault_manifest.md",
+        "title": "SQL Complete Course Architecture & Vault Manifest (`Valay-2004/Notes`)",
+        "path": "SQL/00_sql_curriculum_vault_manifest.md"
       }
     ]
   }
