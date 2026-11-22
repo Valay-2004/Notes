@@ -230,109 +230,382 @@
     "children": [
       {
         "type": "folder",
-        "name": "01. Core Syntax & Type System (For Python & Java Devs)",
-        "path": "PHP/01. Core Syntax & Type System (For Python & Java Devs)",
+        "name": "01. Foundation",
+        "path": "PHP/01. Foundation",
         "children": [
           {
             "type": "file",
-            "name": "01. PHP Execution Model, Tags & Variables.md",
-            "title": "PHP Execution Model, Tags & Variables in PHP",
-            "path": "PHP/01. Core Syntax & Type System (For Python & Java Devs)/01. PHP Execution Model, Tags & Variables.md"
+            "name": "00. Overwiev.md",
+            "title": "01. Foundations — Overview",
+            "path": "PHP/01. Foundation/00. Overwiev.md"
           },
           {
             "type": "file",
-            "name": "02. Types, Strings & Type Juggling (== vs ===).md",
-            "title": "Types, Strings & Type Juggling (== vs ===) in PHP",
-            "path": "PHP/01. Core Syntax & Type System (For Python & Java Devs)/02. Types, Strings & Type Juggling (== vs ===).md"
+            "name": "01. Introduction.md",
+            "title": "Introduction",
+            "path": "PHP/01. Foundation/01. Introduction.md"
           },
           {
             "type": "file",
-            "name": "03. Control Structures, Match & Pipe Operator.md",
-            "title": "Control Structures, Match & Pipe Operator in PHP",
-            "path": "PHP/01. Core Syntax & Type System (For Python & Java Devs)/03. Control Structures, Match & Pipe Operator.md"
+            "name": "02. Variables.md",
+            "title": "Variables",
+            "path": "PHP/01. Foundation/02. Variables.md"
+          },
+          {
+            "type": "file",
+            "name": "03. Scalar Types.md",
+            "title": "Scalar Types",
+            "path": "PHP/01. Foundation/03. Scalar Types.md"
+          },
+          {
+            "type": "file",
+            "name": "04. Strings & Interpolation.md",
+            "title": "Strings & Interpolation",
+            "path": "PHP/01. Foundation/04. Strings & Interpolation.md"
+          },
+          {
+            "type": "file",
+            "name": "05. Type Juggling.md",
+            "title": "Type Juggling",
+            "path": "PHP/01. Foundation/05. Type Juggling.md"
+          },
+          {
+            "type": "file",
+            "name": "06. Strict Types.md",
+            "title": "Strict Types",
+            "path": "PHP/01. Foundation/06. Strict Types.md"
+          },
+          {
+            "type": "file",
+            "name": "07. Constants.md",
+            "title": "Constants",
+            "path": "PHP/01. Foundation/07. Constants.md"
+          },
+          {
+            "type": "file",
+            "name": "08. Operators.md",
+            "title": "Operators",
+            "path": "PHP/01. Foundation/08. Operators.md"
+          },
+          {
+            "type": "file",
+            "name": "09. Null Handling.md",
+            "title": "Null Handling",
+            "path": "PHP/01. Foundation/09. Null Handling.md"
           }
         ]
       },
       {
         "type": "folder",
-        "name": "02. Unified Arrays & Functions",
-        "path": "PHP/02. Unified Arrays & Functions",
+        "name": "02. Control Flow & Functions",
+        "path": "PHP/02. Control Flow & Functions",
         "children": [
           {
             "type": "file",
-            "name": "04. PHP Arrays (The List + Dict Hybrid) & SPL.md",
-            "title": "PHP Arrays (The List + Dict Hybrid) & SPL in PHP",
-            "path": "PHP/02. Unified Arrays & Functions/04. PHP Arrays (The List + Dict Hybrid) & SPL.md"
+            "name": "00. Overview.md",
+            "title": "Overview: Control Flow & Functions",
+            "path": "PHP/02. Control Flow & Functions/00. Overview.md"
           },
           {
             "type": "file",
-            "name": "05. Functions, Type Hints, Closures & DateTime.md",
-            "title": "Functions, Type Hints, Closures & DateTime in PHP",
-            "path": "PHP/02. Unified Arrays & Functions/05. Functions, Type Hints, Closures & DateTime.md"
+            "name": "10. Conditionals.md",
+            "title": "Conditionals",
+            "path": "PHP/02. Control Flow & Functions/10. Conditionals.md"
+          },
+          {
+            "type": "file",
+            "name": "11. Match Expressions.md",
+            "title": "Match Expressions",
+            "path": "PHP/02. Control Flow & Functions/11. Match Expressions.md"
+          },
+          {
+            "type": "file",
+            "name": "12. Loops & Foreach.md",
+            "title": "Loops & Foreach",
+            "path": "PHP/02. Control Flow & Functions/12. Loops & Foreach.md"
+          },
+          {
+            "type": "file",
+            "name": "13. Functions & Scope.md",
+            "title": "Functions & Scope",
+            "path": "PHP/02. Control Flow & Functions/13. Functions & Scope.md"
+          },
+          {
+            "type": "file",
+            "name": "14. Type Hints.md",
+            "title": "Type Hints",
+            "path": "PHP/02. Control Flow & Functions/14. Type Hints.md"
+          },
+          {
+            "type": "file",
+            "name": "15. Named Args & Veriadics.md",
+            "title": "Named Arguments & Variadics",
+            "path": "PHP/02. Control Flow & Functions/15. Named Args & Veriadics.md"
+          },
+          {
+            "type": "file",
+            "name": "16. Closures & Arrow Functions.md",
+            "title": "Closures & Arrow Functions",
+            "path": "PHP/02. Control Flow & Functions/16. Closures & Arrow Functions.md"
           }
         ]
       },
       {
         "type": "folder",
-        "name": "03. Modern OOP & Framework Pillars (Laravel & Symfony DNA)",
-        "path": "PHP/03. Modern OOP & Framework Pillars (Laravel & Symfony DNA)",
+        "name": "03. Arrays & Text",
+        "path": "PHP/03. Arrays & Text",
         "children": [
           {
             "type": "file",
-            "name": "06. Classes, Constructor Promotion & Property Hooks.md",
-            "title": "Classes, Constructor Promotion & Property Hooks in PHP",
-            "path": "PHP/03. Modern OOP & Framework Pillars (Laravel & Symfony DNA)/06. Classes, Constructor Promotion & Property Hooks.md"
+            "name": "00. Overview.md",
+            "title": "Overview: Arrays & Text",
+            "path": "PHP/03. Arrays & Text/00. Overview.md"
           },
           {
             "type": "file",
-            "name": "07. Inheritance, Interfaces, Traits, Enums & Magic.md",
-            "title": "Inheritance, Interfaces, Traits, Enums & Magic in PHP",
-            "path": "PHP/03. Modern OOP & Framework Pillars (Laravel & Symfony DNA)/07. Inheritance, Interfaces, Traits, Enums & Magic.md"
+            "name": "17. Indexed Arrays.md",
+            "title": "Indexed Arrays",
+            "path": "PHP/03. Arrays & Text/17. Indexed Arrays.md"
           },
           {
             "type": "file",
-            "name": "08. Namespaces, Composer (PSR-4), Attributes & DI.md",
-            "title": "Namespaces, Composer (PSR-4), Attributes & DI in PHP",
-            "path": "PHP/03. Modern OOP & Framework Pillars (Laravel & Symfony DNA)/08. Namespaces, Composer (PSR-4), Attributes & DI.md"
+            "name": "18. Associative Arrays.md",
+            "title": "Associative Arrays",
+            "path": "PHP/03. Arrays & Text/18. Associative Arrays.md"
+          },
+          {
+            "type": "file",
+            "name": "19. Array Functions.md",
+            "title": "Array Functions",
+            "path": "PHP/03. Arrays & Text/19. Array Functions.md"
+          },
+          {
+            "type": "file",
+            "name": "20. String Functions.md",
+            "title": "String Functions",
+            "path": "PHP/03. Arrays & Text/20. String Functions.md"
+          },
+          {
+            "type": "file",
+            "name": "21. JSON Encoding.md",
+            "title": "JSON Encoding",
+            "path": "PHP/03. Arrays & Text/21. JSON Encoding.md"
           }
         ]
       },
       {
         "type": "folder",
-        "name": "04. Web Request Lifecycle, PDO Databases & Security",
-        "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security",
+        "name": "04. Object-Oriented PHP",
+        "path": "PHP/04. Object-Oriented PHP",
         "children": [
           {
             "type": "file",
-            "name": "09. Superglobals, HTTP, Templating & Data Filtering.md",
-            "title": "Superglobals, HTTP, Templating & Data Filtering in PHP",
-            "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security/09. Superglobals, HTTP, Templating & Data Filtering.md"
+            "name": "00. Overview.md",
+            "title": "Overview: Object-Oriented PHP",
+            "path": "PHP/04. Object-Oriented PHP/00. Overview.md"
           },
           {
             "type": "file",
-            "name": "10. Files, Streams, Error or Exception Hierarchy & Xdebug.md",
-            "title": "Files, Streams, Error/Exception Hierarchy & Xdebug in PHP",
-            "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security/10. Files, Streams, Error or Exception Hierarchy & Xdebug.md"
+            "name": "22. Classes and Objects.md",
+            "title": "Classes & Objects",
+            "path": "PHP/04. Object-Oriented PHP/22. Classes and Objects.md"
           },
           {
             "type": "file",
-            "name": "11. Databases with PDO, Transactions & Caching.md",
-            "title": "Databases with PDO, Transactions & Caching in PHP",
-            "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security/11. Databases with PDO, Transactions & Caching.md"
+            "name": "23. Constructors & Visibility.md",
+            "title": "Constructors & Visibility",
+            "path": "PHP/04. Object-Oriented PHP/23. Constructors & Visibility.md"
           },
           {
             "type": "file",
-            "name": "12. Web Security, CTF Gotchas, Testing & Deployment.md",
-            "title": "Web Security, CTF Gotchas, Testing & Deployment in PHP",
-            "path": "PHP/04. Web Request Lifecycle, PDO Databases & Security/12. Web Security, CTF Gotchas, Testing & Deployment.md"
+            "name": "24. Inheritance & Interfaces.md",
+            "title": "Inheritance & Interfaces",
+            "path": "PHP/04. Object-Oriented PHP/24. Inheritance & Interfaces.md"
+          },
+          {
+            "type": "file",
+            "name": "25. Traits.md",
+            "title": "Traits",
+            "path": "PHP/04. Object-Oriented PHP/25. Traits.md"
+          },
+          {
+            "type": "file",
+            "name": "26. Static Members.md",
+            "title": "Static Members",
+            "path": "PHP/04. Object-Oriented PHP/26. Static Members.md"
+          },
+          {
+            "type": "file",
+            "name": "27. Enums.md",
+            "title": "Enums",
+            "path": "PHP/04. Object-Oriented PHP/27. Enums.md"
+          },
+          {
+            "type": "file",
+            "name": "28. Property Hooks.md",
+            "title": "Property Hooks",
+            "path": "PHP/04. Object-Oriented PHP/28. Property Hooks.md"
+          },
+          {
+            "type": "file",
+            "name": "29. Asymmetric Visibility.md",
+            "title": "Asymmetric Visibility",
+            "path": "PHP/04. Object-Oriented PHP/29. Asymmetric Visibility.md"
           }
         ]
       },
       {
-        "type": "file",
-        "name": "00. PHP Curriculum & Vault Manifest.md",
-        "title": "Modern PHP 8.4/8.5+ Master Curriculum (The Right Way Edition)",
-        "path": "PHP/00. PHP Curriculum & Vault Manifest.md"
+        "type": "folder",
+        "name": "05. Errors, Files & Packages",
+        "path": "PHP/05. Errors, Files & Packages",
+        "children": [
+          {
+            "type": "file",
+            "name": "00. Overview.md",
+            "title": "Overview: Errors, Files & Packages",
+            "path": "PHP/05. Errors, Files & Packages/00. Overview.md"
+          },
+          {
+            "type": "file",
+            "name": "30. Error Reporting & Debugging.md",
+            "title": "Error Reporting & Debugging",
+            "path": "PHP/05. Errors, Files & Packages/30. Error Reporting & Debugging.md"
+          },
+          {
+            "type": "file",
+            "name": "31. Exceptions.md",
+            "title": "Exceptions",
+            "path": "PHP/05. Errors, Files & Packages/31. Exceptions.md"
+          },
+          {
+            "type": "file",
+            "name": "32. Namespaces.md",
+            "title": "Namespaces",
+            "path": "PHP/05. Errors, Files & Packages/32. Namespaces.md"
+          },
+          {
+            "type": "file",
+            "name": "33. Autoloading.md",
+            "title": "Autoloading",
+            "path": "PHP/05. Errors, Files & Packages/33. Autoloading.md"
+          },
+          {
+            "type": "file",
+            "name": "34. Composer & Packages.md",
+            "title": "Composer & Packages",
+            "path": "PHP/05. Errors, Files & Packages/34. Composer & Packages.md"
+          },
+          {
+            "type": "file",
+            "name": "35. File Reading & Writing.md",
+            "title": "File Reading & Writing",
+            "path": "PHP/05. Errors, Files & Packages/35. File Reading & Writing.md"
+          },
+          {
+            "type": "file",
+            "name": "36. Dates & Times.md",
+            "title": "Dates & Times",
+            "path": "PHP/05. Errors, Files & Packages/36. Dates & Times.md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "06. Web & Database.md",
+        "path": "PHP/06. Web & Database.md",
+        "children": [
+          {
+            "type": "file",
+            "name": "00. Overview.md",
+            "title": "Overview: Web & Databases",
+            "path": "PHP/06. Web & Database.md/00. Overview.md"
+          },
+          {
+            "type": "file",
+            "name": "37. Request Lifecycle.md",
+            "title": "Request Lifecycle",
+            "path": "PHP/06. Web & Database.md/37. Request Lifecycle.md"
+          },
+          {
+            "type": "file",
+            "name": "38. Superglobals.md",
+            "title": "Superglobals",
+            "path": "PHP/06. Web & Database.md/38. Superglobals.md"
+          },
+          {
+            "type": "file",
+            "name": "39. Forms & Output Escaping.md",
+            "title": "Forms & Output Escaping",
+            "path": "PHP/06. Web & Database.md/39. Forms & Output Escaping.md"
+          },
+          {
+            "type": "file",
+            "name": "40. Cookies.md",
+            "title": "Cookies",
+            "path": "PHP/06. Web & Database.md/40. Cookies.md"
+          },
+          {
+            "type": "file",
+            "name": "41. Sessions.md",
+            "title": "Sessions",
+            "path": "PHP/06. Web & Database.md/41. Sessions.md"
+          },
+          {
+            "type": "file",
+            "name": "42. Password Hashing.md",
+            "title": "Password Hashing",
+            "path": "PHP/06. Web & Database.md/42. Password Hashing.md"
+          },
+          {
+            "type": "file",
+            "name": "43. PDO Connection.md",
+            "title": "PDO Connection",
+            "path": "PHP/06. Web & Database.md/43. PDO Connection.md"
+          },
+          {
+            "type": "file",
+            "name": "44. Prepared Statements.md",
+            "title": "Prepared Statements",
+            "path": "PHP/06. Web & Database.md/44. Prepared Statements.md"
+          },
+          {
+            "type": "file",
+            "name": "45. Building a JSON API.md",
+            "title": "Building a JSON API",
+            "path": "PHP/06. Web & Database.md/45. Building a JSON API.md"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "07. Capstone - Book Tracker",
+        "path": "PHP/07. Capstone - Book Tracker",
+        "children": [
+          {
+            "type": "file",
+            "name": "00. Overview.md",
+            "title": "Overview: Capstone — Book Tracker",
+            "path": "PHP/07. Capstone - Book Tracker/00. Overview.md"
+          },
+          {
+            "type": "file",
+            "name": "46. Book Tracker Setup & Storage.md",
+            "title": "Book Tracker Setup & Storage",
+            "path": "PHP/07. Capstone - Book Tracker/46. Book Tracker Setup & Storage.md"
+          },
+          {
+            "type": "file",
+            "name": "47. Book Tracker CRUD & Validation.md",
+            "title": "Book Tracker CRUD & Validation",
+            "path": "PHP/07. Capstone - Book Tracker/47. Book Tracker CRUD & Validation.md"
+          },
+          {
+            "type": "file",
+            "name": "48. Book Tracker JSON & Polish.md",
+            "title": "Book Tracker JSON & Polish",
+            "path": "PHP/07. Capstone - Book Tracker/48. Book Tracker JSON & Polish.md"
+          }
+        ]
       }
     ]
   },
@@ -569,12 +842,6 @@
             "path": "SQL/06. Advanced SQL & Production Mastery/03. Views, Indexes, Transactions & Stored Procedures.md"
           }
         ]
-      },
-      {
-        "type": "file",
-        "name": "00_sql_curriculum_vault_manifest.md",
-        "title": "SQL Complete Course Architecture & Vault Manifest (`Valay-2004/Notes`)",
-        "path": "SQL/00_sql_curriculum_vault_manifest.md"
       }
     ]
   }
